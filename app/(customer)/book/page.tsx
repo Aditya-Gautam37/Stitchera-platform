@@ -1,21 +1,33 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SubmitButton } from "@/components/submit-button";
 import { createBooking } from "./actions";
 
 export default async function BookPage() {
   const supabase = await createClient();
-  const [{ data: services }, { data: cities }] = await Promise.all([
-    supabase
-      .from("services")
-      .select("id, name, base_price, est_days")
-      .eq("is_active", true)
-      .order("sort_order"),
-    supabase
-      .from("cities")
-      .select("id, name")
-      .eq("is_active", true)
-      .order("name"),
-  ]);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [{ data: services }, { data: cities }, { data: measurements }] =
+    await Promise.all([
+      supabase
+        .from("services")
+        .select("id, name, base_price, est_days")
+        .eq("is_active", true)
+        .order("sort_order"),
+      supabase
+        .from("cities")
+        .select("id, name")
+        .eq("is_active", true)
+        .order("name"),
+      supabase
+        .from("measurements")
+        .select("id, label, garment_type, person_name")
+        .eq("profile_id", user!.id)
+        .eq("is_active", true)
+        .order("created_at", { ascending: false }),
+    ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -54,6 +66,28 @@ export default async function BookPage() {
             required
             className="rounded border px-3 py-2"
           />
+        </label>
+
+        <label className="flex flex-col gap-1 text-sm">
+          Measurements
+          <select name="measurement_id" className="rounded border px-3 py-2">
+            <option value="">
+              {measurements?.length
+                ? "Our team will take them at pickup"
+                : "Our team will take them at pickup (none saved yet)"}
+            </option>
+            {measurements?.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.label} — {m.garment_type}
+                {m.person_name ? ` (${m.person_name})` : ""}
+              </option>
+            ))}
+          </select>
+          <span className="text-xs text-zinc-500">
+            <Link href="/measurements" className="underline">
+              Manage saved measurements
+            </Link>
+          </span>
         </label>
 
         <label className="flex flex-col gap-1 text-sm">

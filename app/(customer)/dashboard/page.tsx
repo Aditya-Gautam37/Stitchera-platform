@@ -30,12 +30,20 @@ export default async function DashboardPage() {
         <p className="text-sm text-zinc-500">{profile?.phone}</p>
       </div>
 
-      <Link
-        href="/book"
-        className="w-fit rounded bg-black px-4 py-2 text-sm text-white"
-      >
-        Book a service
-      </Link>
+      <div className="flex flex-wrap gap-3">
+        <Link
+          href="/book"
+          className="rounded bg-black px-4 py-2 text-sm text-white"
+        >
+          Book a service
+        </Link>
+        <Link
+          href="/measurements"
+          className="rounded border px-4 py-2 text-sm font-medium"
+        >
+          My measurements
+        </Link>
+      </div>
 
       <div>
         <h2 className="text-lg font-medium">Recent orders</h2>

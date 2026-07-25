@@ -2,6 +2,10 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { formatMeasurementSummary } from "@/lib/measurements";
+import { MeasurementFields } from "@/components/measurement-fields";
+import { SubmitButton } from "@/components/submit-button";
+import { recordCustomerMeasurement } from "./actions";
 
 export default async function CustomerDetailPage({
   params,
@@ -48,8 +52,9 @@ export default async function CustomerDetailPage({
 
   const { data: measurements } = await supabase
     .from("measurements")
-    .select("id, label, garment_type, is_active")
-    .eq("profile_id", id);
+    .select("id, label, garment_type, person_name, values, notes, is_active")
+    .eq("profile_id", id)
+    .order("created_at", { ascending: false });
 
   return (
     <div className="flex flex-col gap-8">
@@ -118,11 +123,41 @@ export default async function CustomerDetailPage({
           <ul className="mt-2 divide-y text-sm">
             {measurements.map((m) => (
               <li key={m.id} className="py-2">
-                {m.label} · {m.garment_type} {!m.is_active && "(inactive)"}
+                <p className="font-medium">
+                  {m.label}
+                  <span className="ml-2 font-normal text-zinc-500">
+                    {m.garment_type}
+                    {m.person_name ? ` · ${m.person_name}` : ""}
+                    {!m.is_active ? " · inactive" : ""}
+                  </span>
+                </p>
+                <p className="text-zinc-600 dark:text-zinc-400">
+                  {formatMeasurementSummary(m.values)}
+                </p>
+                {m.notes && <p className="text-zinc-500">{m.notes}</p>}
               </li>
             ))}
           </ul>
         )}
+
+        <details className="mt-4">
+          <summary className="cursor-pointer text-sm font-medium">
+            Record measurements for this customer
+          </summary>
+          <form
+            action={recordCustomerMeasurement}
+            className="mt-4 flex flex-col gap-5 rounded border p-4"
+          >
+            <input type="hidden" name="customer_id" value={customer.id} />
+            <MeasurementFields />
+            <SubmitButton
+              pendingText="Saving..."
+              className="w-fit rounded bg-black px-4 py-2 text-sm text-white disabled:opacity-50"
+            >
+              Save measurements
+            </SubmitButton>
+          </form>
+        </details>
       </div>
     </div>
   );

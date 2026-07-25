@@ -5,6 +5,7 @@ const PROTECTED_PREFIXES = [
   "/dashboard",
   "/book",
   "/orders",
+  "/measurements",
   "/onboarding",
   "/admin",
 ];

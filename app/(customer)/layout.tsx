@@ -31,6 +31,7 @@ export default async function CustomerLayout({
           <Link href="/dashboard">Dashboard</Link>
           <Link href="/book">Book</Link>
           <Link href="/orders">Orders</Link>
+          <Link href="/measurements">Measurements</Link>
         </nav>
         <form action={logout}>
           <button type="submit" className="text-sm text-zinc-500 underline">

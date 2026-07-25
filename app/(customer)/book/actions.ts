@@ -18,6 +18,8 @@ export async function createBooking(formData: FormData) {
   const addressPincode = formData.get("address_pincode") as string | null;
   const contactPhone = formData.get("contact_phone") as string | null;
   const customerNote = formData.get("customer_note") as string | null;
+  const measurementId =
+    (formData.get("measurement_id") as string | null) || null;
 
   if (!serviceId || !cityId) {
     throw new Error("Please choose a service and a city");
@@ -37,6 +39,7 @@ export async function createBooking(formData: FormData) {
     p_address_pincode: addressPincode,
     p_contact_phone: contactPhone,
     p_customer_note: customerNote,
+    p_measurement_id: measurementId,
   });
 
   if (error || !orderId) {

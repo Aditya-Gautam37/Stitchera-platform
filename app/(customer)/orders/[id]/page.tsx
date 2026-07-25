@@ -25,7 +25,8 @@ export default async function OrderDetailPage({
       `id, order_number, status, grand_total, items_total, visit_charge, delivery_charge,
        address_line, address_landmark, address_pincode, contact_phone, cancel_reason, placed_at,
        payment_status,
-       order_items ( id, qty, unit_price, line_total, services ( name ) )`
+       order_items ( id, qty, unit_price, line_total, services ( name ),
+         measurements ( label, person_name, values ) )`
     )
     .eq("id", id)
     .single();
@@ -83,12 +84,25 @@ export default async function OrderDetailPage({
             const service = Array.isArray(item.services)
               ? item.services[0]
               : item.services;
+            const measurement = Array.isArray(item.measurements)
+              ? item.measurements[0]
+              : item.measurements;
             return (
-              <li key={item.id} className="flex justify-between py-2 text-sm">
-                <span>
-                  {service?.name} × {item.qty}
-                </span>
-                <span>₹{item.line_total}</span>
+              <li key={item.id} className="py-2 text-sm">
+                <div className="flex justify-between">
+                  <span>
+                    {service?.name} × {item.qty}
+                  </span>
+                  <span>₹{item.line_total}</span>
+                </div>
+                {measurement && (
+                  <p className="mt-0.5 text-xs text-zinc-500">
+                    Using: {measurement.label}
+                    {measurement.person_name
+                      ? ` (${measurement.person_name})`
+                      : ""}
+                  </p>
+                )}
               </li>
             );
           })}

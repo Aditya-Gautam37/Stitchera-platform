@@ -10,6 +10,7 @@ import {
 } from "@/lib/constants";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { formatMeasurementSummary } from "@/lib/measurements";
 import { SubmitButton } from "@/components/submit-button";
 import {
   updateOrderStatus,
@@ -35,7 +36,8 @@ export default async function AdminOrderDetailPage({
        address_line, address_landmark, address_pincode, contact_phone, customer_note,
        city_id, pickup_agent_id, tailor_id, promised_date, placed_at,
        payment_status, commission_amount, tailor_payout,
-       order_items ( id, qty, unit_price, line_total, services ( name ) ),
+       order_items ( id, qty, unit_price, line_total, services ( name ),
+         measurements ( id, label, garment_type, person_name, values ) ),
        customer:profiles!customer_id ( full_name, phone )`
     )
     .eq("id", id)
@@ -109,12 +111,30 @@ export default async function AdminOrderDetailPage({
                 const service = Array.isArray(item.services)
                   ? item.services[0]
                   : item.services;
+                const measurement = Array.isArray(item.measurements)
+                  ? item.measurements[0]
+                  : item.measurements;
                 return (
-                  <li key={item.id} className="flex justify-between py-2">
-                    <span>
-                      {service?.name} × {item.qty}
-                    </span>
-                    <span>₹{item.line_total}</span>
+                  <li key={item.id} className="py-2">
+                    <div className="flex justify-between">
+                      <span>
+                        {service?.name} × {item.qty}
+                      </span>
+                      <span>₹{item.line_total}</span>
+                    </div>
+                    {measurement ? (
+                      <p className="mt-0.5 text-xs text-zinc-500">
+                        {measurement.label}
+                        {measurement.person_name
+                          ? ` (${measurement.person_name})`
+                          : ""}
+                        : {formatMeasurementSummary(measurement.values)}
+                      </p>
+                    ) : (
+                      <p className="mt-0.5 text-xs text-amber-600">
+                        No measurements on file — take them at pickup
+                      </p>
+                    )}
                   </li>
                 );
               })}
