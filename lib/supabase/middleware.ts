@@ -50,11 +50,15 @@ export async function updateSession(request: NextRequest) {
   const isProtected = PROTECTED_PREFIXES.some(
     (prefix) => path === prefix || path.startsWith(`${prefix}/`)
   );
+  // Preserve query params (e.g. /book?service=<id> from a guided finder)
+  // across the login round-trip, not just the bare pathname.
+  const fullPath = path + request.nextUrl.search;
 
   const redirectTo = (pathname: string) => {
     const url = request.nextUrl.clone();
     url.pathname = pathname;
-    if (pathname === "/login") url.searchParams.set("next", path);
+    url.search = "";
+    if (pathname === "/login") url.searchParams.set("next", fullPath);
     const response = NextResponse.redirect(url);
     supabaseResponse.cookies
       .getAll()

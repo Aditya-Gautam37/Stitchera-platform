@@ -4,7 +4,12 @@ import { SubmitButton } from "@/components/submit-button";
 import { PAYMENT_PREFERENCE_LABELS, PAYMENT_PREFERENCES } from "@/lib/constants";
 import { createBooking } from "./actions";
 
-export default async function BookPage() {
+export default async function BookPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ service?: string; note?: string }>;
+}) {
+  const { service: preselectedService, note: prefilledNote } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -91,6 +96,7 @@ export default async function BookPage() {
           <select
             name="service_id"
             required
+            defaultValue={preselectedService || services?.[0]?.id}
             className="rounded border border-line bg-paper px-3 py-2"
           >
             {services?.map((service) => (
@@ -205,6 +211,7 @@ export default async function BookPage() {
           Note (optional)
           <textarea
             name="customer_note"
+            defaultValue={prefilledNote ?? ""}
             className="rounded border border-line bg-paper px-3 py-2"
           />
         </label>
