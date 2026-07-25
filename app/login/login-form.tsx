@@ -11,12 +11,21 @@ export function LoginForm({ next }: { next: string }) {
   const supabase = createClient();
   const router = useRouter();
 
+  const [method, setMethod] = useState<"phone" | "email">("email");
+
+  // Phone OTP state
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [stage, setStage] = useState<"phone" | "otp">("phone");
+  const [cooldown, setCooldown] = useState(0);
+
+  // Email/password state
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailMode, setEmailMode] = useState<"login" | "signup">("login");
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -77,11 +86,119 @@ export function LoginForm({ next }: { next: string }) {
     router.refresh();
   }
 
+  async function submitEmail(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    if (emailMode === "signup") {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      setLoading(false);
+      if (error) {
+        setError(error.message);
+        return;
+      }
+      if (!data.session) {
+        setError(
+          "Account created — check your email to confirm it, then log in. (If you don't want to wait on email delivery, turn off \"Confirm email\" under Supabase Dashboard → Authentication → Providers → Email.)"
+        );
+        setEmailMode("login");
+        return;
+      }
+      router.replace(next);
+      router.refresh();
+      return;
+    }
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (error) {
+      setError(error.message);
+      return;
+    }
+    router.replace(next);
+    router.refresh();
+  }
+
   return (
     <main className="mx-auto flex max-w-sm flex-col gap-6 p-8">
       <h1 className="text-2xl font-semibold">Log in</h1>
 
-      {stage === "phone" ? (
+      <div className="flex gap-2 text-sm">
+        <button
+          type="button"
+          onClick={() => {
+            setMethod("email");
+            setError(null);
+          }}
+          className={`rounded border px-3 py-1.5 ${
+            method === "email" ? "bg-black text-white" : "text-zinc-600"
+          }`}
+        >
+          Email
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setMethod("phone");
+            setError(null);
+          }}
+          className={`rounded border px-3 py-1.5 ${
+            method === "phone" ? "bg-black text-white" : "text-zinc-600"
+          }`}
+        >
+          Phone
+        </button>
+      </div>
+
+      {method === "email" ? (
+        <form onSubmit={submitEmail} className="flex flex-col gap-4">
+          <label className="flex flex-col gap-1 text-sm">
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="rounded border px-3 py-2"
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+              className="rounded border px-3 py-2"
+            />
+          </label>
+          <button
+            type="submit"
+            disabled={loading}
+            className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
+          >
+            {loading
+              ? "Please wait..."
+              : emailMode === "signup"
+                ? "Sign up"
+                : "Log in"}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setEmailMode(emailMode === "signup" ? "login" : "signup");
+              setError(null);
+            }}
+            className="text-sm text-zinc-500 underline"
+          >
+            {emailMode === "signup"
+              ? "Already have an account? Log in"
+              : "New here? Create an account"}
+          </button>
+        </form>
+      ) : stage === "phone" ? (
         <form onSubmit={sendOtp} className="flex flex-col gap-4">
           <label className="flex flex-col gap-1 text-sm">
             Phone number
