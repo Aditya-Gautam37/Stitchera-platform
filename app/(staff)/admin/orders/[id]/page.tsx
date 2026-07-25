@@ -4,9 +4,11 @@ import {
   ORDER_STATUS_LABELS,
   PAYMENT_MODES,
   PAYMENT_MODE_LABELS,
+  PAYMENT_PREFERENCE_LABELS,
   PAYMENT_STATUS_LABELS,
   type OrderStatus,
   type PaymentMode,
+  type PaymentPreference,
 } from "@/lib/constants";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
@@ -32,7 +34,8 @@ export default async function AdminOrderDetailPage({
   const { data: order } = await supabase
     .from("orders")
     .select(
-      `id, order_number, status, grand_total, items_total, visit_charge, delivery_charge,
+      `id, order_number, status, grand_total, items_total, delivery_charge,
+       handling_charge, surge_charge, advance_required, payment_preference,
        address_line, address_landmark, address_pincode, contact_phone, customer_note,
        city_id, pickup_agent_id, tailor_id, promised_date, placed_at,
        payment_status, commission_amount, tailor_payout,
@@ -139,6 +142,22 @@ export default async function AdminOrderDetailPage({
                 );
               })}
             </ul>
+            <div className="mt-2 flex flex-col gap-1 border-t pt-2 text-sm text-zinc-500">
+              <div className="flex justify-between">
+                <span>Handling charge</span>
+                <span>₹{order.handling_charge}</span>
+              </div>
+              {Number(order.surge_charge) > 0 && (
+                <div className="flex justify-between">
+                  <span>Late-hours surge</span>
+                  <span>₹{order.surge_charge}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span>Delivery charge (estimated)</span>
+                <span>₹{order.delivery_charge}</span>
+              </div>
+            </div>
             <div className="mt-2 flex justify-between text-sm font-medium">
               <span>Grand total</span>
               <span>₹{order.grand_total}</span>
@@ -171,6 +190,14 @@ export default async function AdminOrderDetailPage({
                 Due <span className="font-medium">₹{balanceDue.toFixed(2)}</span>
               </span>
             </div>
+            {paid === 0 && (
+              <p className="mt-1 text-xs text-zinc-500">
+                Advance required: ₹{order.advance_required} · Customer prefers:{" "}
+                {order.payment_preference
+                  ? PAYMENT_PREFERENCE_LABELS[order.payment_preference as PaymentPreference]
+                  : "—"}
+              </p>
+            )}
 
             {!!payments?.length && (
               <ul className="mt-3 divide-y text-sm">

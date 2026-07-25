@@ -56,3 +56,19 @@ export const PAYMENT_STATUS_LABELS: Record<string, string> = {
   paid: "Paid",
   refunded: "Refunded",
 };
+
+export const PAYMENT_PREFERENCES = ["online", "cod"] as const;
+export type PaymentPreference = (typeof PAYMENT_PREFERENCES)[number];
+
+export const PAYMENT_PREFERENCE_LABELS: Record<PaymentPreference, string> = {
+  online: "Pay online",
+  cod: "Cash on delivery",
+};
+
+export const SUBSCRIPTION_PLANS = [
+  { key: "karigar", name: "Karigar", tagline: "Skilled artisan" },
+  { key: "ustad", name: "Ustad", tagline: "Master craftsman" },
+  { key: "meher", name: "Meher", tagline: "Grace & elegance" },
+  { key: "shahi", name: "Shahi", tagline: "Royal luxury" },
+] as const;
+export type SubscriptionPlan = (typeof SUBSCRIPTION_PLANS)[number]["key"];

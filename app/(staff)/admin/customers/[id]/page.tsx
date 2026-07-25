@@ -3,9 +3,11 @@ import Link from "next/link";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
 import { formatMeasurementSummary } from "@/lib/measurements";
+import { SUBSCRIPTION_PLANS } from "@/lib/constants";
 import { MeasurementFields } from "@/components/measurement-fields";
 import { SubmitButton } from "@/components/submit-button";
 import { recordCustomerMeasurement } from "./actions";
+import { grantSubscription } from "./subscription-actions";
 
 export default async function CustomerDetailPage({
   params,
@@ -55,6 +57,15 @@ export default async function CustomerDetailPage({
     .select("id, label, garment_type, person_name, values, notes, is_active")
     .eq("profile_id", id)
     .order("created_at", { ascending: false });
+
+  const { data: subscriptions } =
+    profile.role === "admin"
+      ? await supabase
+          .from("customer_subscriptions")
+          .select("id, plan, status, started_at")
+          .eq("profile_id", id)
+          .order("started_at", { ascending: false })
+      : { data: null };
 
   return (
     <div className="flex flex-col gap-8">
@@ -159,6 +170,47 @@ export default async function CustomerDetailPage({
           </form>
         </details>
       </div>
+
+      {profile.role === "admin" && (
+        <div>
+          <h2 className="text-lg font-medium">Subscription</h2>
+          {!subscriptions?.length ? (
+            <p className="mt-2 text-sm text-zinc-500">No subscription.</p>
+          ) : (
+            <ul className="mt-2 divide-y text-sm">
+              {subscriptions.map((s) => (
+                <li key={s.id} className="py-2">
+                  {s.plan} · {s.status} · since{" "}
+                  {new Date(s.started_at).toLocaleDateString()}
+                </li>
+              ))}
+            </ul>
+          )}
+          <form
+            action={grantSubscription}
+            className="mt-3 flex items-center gap-2"
+          >
+            <input type="hidden" name="customer_id" value={customer.id} />
+            <select name="plan" className="rounded border px-2 py-1.5 text-sm">
+              {SUBSCRIPTION_PLANS.map((p) => (
+                <option key={p.key} value={p.key}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <SubmitButton
+              pendingText="Granting..."
+              className="rounded border px-3 py-1.5 text-sm disabled:opacity-50"
+            >
+              Grant subscription
+            </SubmitButton>
+          </form>
+          <p className="mt-1 text-xs text-zinc-500">
+            Stopgap until the real subscription purchase flow ships — lets a
+            customer who&apos;s used their 3 free bookings keep going.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

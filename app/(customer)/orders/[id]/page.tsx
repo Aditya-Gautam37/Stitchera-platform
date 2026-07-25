@@ -3,9 +3,11 @@ import {
   CANCELLABLE_STATUSES,
   ORDER_STATUS_LABELS,
   PAYMENT_MODE_LABELS,
+  PAYMENT_PREFERENCE_LABELS,
   PAYMENT_STATUS_LABELS,
   type OrderStatus,
   type PaymentMode,
+  type PaymentPreference,
 } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 import { SubmitButton } from "@/components/submit-button";
@@ -24,7 +26,8 @@ export default async function OrderDetailPage({
   const { data: order } = await supabase
     .from("orders")
     .select(
-      `id, order_number, status, grand_total, items_total, visit_charge, delivery_charge,
+      `id, order_number, status, grand_total, items_total, delivery_charge, handling_charge,
+       surge_charge, advance_required, payment_preference,
        address_line, address_landmark, address_pincode, contact_phone, cancel_reason, placed_at,
        payment_status, tailor_id, pickup_agent_id,
        order_items ( id, qty, unit_price, line_total, services ( name ),
@@ -136,15 +139,21 @@ export default async function OrderDetailPage({
 
       <div className="text-sm text-ink">
         <div className="flex justify-between">
-          <span>Items</span>
+          <span>Service charge</span>
           <span className="font-mono">₹{order.items_total}</span>
         </div>
         <div className="flex justify-between">
-          <span>Visit charge</span>
-          <span className="font-mono">₹{order.visit_charge}</span>
+          <span>Handling charge</span>
+          <span className="font-mono">₹{order.handling_charge}</span>
         </div>
+        {Number(order.surge_charge) > 0 && (
+          <div className="flex justify-between">
+            <span>Late-hours surge</span>
+            <span className="font-mono">₹{order.surge_charge}</span>
+          </div>
+        )}
         <div className="flex justify-between">
-          <span>Delivery charge</span>
+          <span>Delivery charge (estimated)</span>
           <span className="font-mono">₹{order.delivery_charge}</span>
         </div>
         <div className="mt-2 flex justify-between font-medium">
@@ -168,6 +177,14 @@ export default async function OrderDetailPage({
             </span>
           )}
         </div>
+        {paid === 0 && status !== "cancelled" && (
+          <p className="mt-1 text-xs text-ink-soft">
+            Advance required: ₹{order.advance_required} · Preferred method:{" "}
+            {order.payment_preference
+              ? PAYMENT_PREFERENCE_LABELS[order.payment_preference as PaymentPreference]
+              : "—"}
+          </p>
+        )}
         {!!payments?.length && (
           <ul className="mt-2 divide-y divide-line-soft text-sm">
             {payments.map((p) => (
