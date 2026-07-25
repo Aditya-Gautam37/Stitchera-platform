@@ -68,3 +68,11 @@ export function parseNonNegativeInt(
   }
   return n;
 }
+
+export function parseSpecialities(value: FormDataEntryValue | null): string[] {
+  if (typeof value !== "string" || !value.trim()) return [];
+  return value
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}

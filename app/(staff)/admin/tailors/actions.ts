@@ -9,15 +9,8 @@ import {
   parsePercent,
   parsePositiveInt,
   parseRequiredText,
+  parseSpecialities,
 } from "@/lib/validation";
-
-function parseSpecialities(raw: string | null) {
-  if (!raw) return [];
-  return raw
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
 
 const TAILOR_STATUSES = [
   "pending_verification",
