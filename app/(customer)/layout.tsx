@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { logout } from "@/lib/actions/auth";
+import { SiteHeader } from "@/components/site/site-header";
+import { SiteFooter } from "@/components/site/site-footer";
 
 export default async function CustomerLayout({
   children,
@@ -25,21 +25,12 @@ export default async function CustomerLayout({
   if (!profile?.full_name) redirect("/onboarding");
 
   return (
-    <div className="mx-auto flex min-h-full max-w-2xl flex-col">
-      <header className="flex items-center justify-between border-b px-8 py-4">
-        <nav className="flex gap-4 text-sm font-medium">
-          <Link href="/dashboard">Dashboard</Link>
-          <Link href="/book">Book</Link>
-          <Link href="/orders">Orders</Link>
-          <Link href="/measurements">Measurements</Link>
-        </nav>
-        <form action={logout}>
-          <button type="submit" className="text-sm text-zinc-500 underline">
-            Log out
-          </button>
-        </form>
-      </header>
-      <div className="flex-1 p-8">{children}</div>
+    <div className="flex min-h-full flex-col">
+      <SiteHeader />
+      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8">
+        {children}
+      </main>
+      <SiteFooter />
     </div>
   );
 }

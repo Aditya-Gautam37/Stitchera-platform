@@ -1,26 +1,69 @@
 @import "tailwindcss";
 
+/* Design tokens — see the approved design plan: indigo-dyed cloth, marigold
+   spent in one place, unbleached cotton ground. Not cream/serif/terracotta,
+   not SaaS blue, not startup dark mode. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --cotton: #f1eee7;
+  --paper: #fbfaf6;
+  --ink: #1c1b33;
+  --ink-soft: #55547a;
+  --indigo: #3d4592;
+  --indigo-strong: #2b3170;
+  --marigold: #e0932a;
+  --marigold-ink: #6b430a;
+  --thread-red: #a23b2e;
+  --line: #ddd7c8;
+  --line-soft: #e7e2d5;
+  --focus: #2b3170;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --cotton: #16152a;
+    --paper: #201f3a;
+    --ink: #ece8dd;
+    --ink-soft: #b3aec2;
+    --indigo: #7981d6;
+    --indigo-strong: #a2a8e6;
+    --marigold: #f0a83e;
+    --marigold-ink: #2a1c08;
+    --thread-red: #d97362;
+    --line: #383659;
+    --line-soft: #2b2a48;
+    --focus: #a2a8e6;
   }
 }
 
+@theme inline {
+  --color-cotton: var(--cotton);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-indigo: var(--indigo);
+  --color-indigo-strong: var(--indigo-strong);
+  --color-marigold: var(--marigold);
+  --color-marigold-ink: var(--marigold-ink);
+  --color-thread-red: var(--thread-red);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+
+  --font-sans: var(--font-body-face), system-ui, sans-serif;
+  --font-display: var(--font-display-face), var(--font-body-face), system-ui, sans-serif;
+  --font-mono: var(--font-data-face), ui-monospace, monospace;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--marigold);
+  color: var(--marigold-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
