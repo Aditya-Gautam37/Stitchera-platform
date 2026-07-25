@@ -14,6 +14,7 @@ const NAV_ITEMS: {
   { href: "/admin/applications", label: "Applications", roles: ["admin", "city_manager"] },
   { href: "/admin/services", label: "Services", roles: ["admin"] },
   { href: "/admin/cities", label: "Cities & Pricing", roles: ["admin"] },
+  { href: "/admin/subscriptions", label: "Subscription Plans", roles: ["admin"] },
   { href: "/admin/staff", label: "Staff", roles: ["admin"] },
 ];
 
