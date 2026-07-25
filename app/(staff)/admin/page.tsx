@@ -9,6 +9,12 @@ type OrderStatRow = {
   placed_last_30d: number;
 };
 
+type RevenueStatRow = {
+  collected: number;
+  outstanding: number;
+  orders_awaiting_payment: number;
+};
+
 function formatCurrency(amount: number) {
   return `₹${amount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
 }
@@ -20,14 +26,23 @@ export default async function AdminOverviewPage() {
   // Aggregated in SQL (order_stats()) rather than pulling every order row —
   // RLS still scopes this to the caller's city for city_manager/pickup_agent,
   // and to every city for admin.
-  const { data: stats, error } = await supabase.rpc("order_stats");
+  const [{ data: stats, error }, { data: revenue, error: revenueError }] =
+    await Promise.all([
+      supabase.rpc("order_stats"),
+      supabase.rpc("revenue_stats"),
+    ]);
   if (error) console.error("[admin-overview]", error);
+  if (revenueError) console.error("[admin-overview-revenue]", revenueError);
 
   const rows = (stats ?? []) as OrderStatRow[];
+  const money = ((revenue ?? [])[0] ?? {
+    collected: 0,
+    outstanding: 0,
+    orders_awaiting_payment: 0,
+  }) as RevenueStatRow;
   const byStatus = new Map(rows.map((r) => [r.status, r]));
 
   const total = rows.reduce((sum, r) => sum + Number(r.order_count), 0);
-  const revenue = rows.reduce((sum, r) => sum + Number(r.revenue_paid), 0);
   const recentCount = rows.reduce(
     (sum, r) => sum + Number(r.placed_last_30d),
     0
@@ -46,12 +61,20 @@ export default async function AdminOverviewPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatTile label="Total orders" value={total.toLocaleString("en-IN")} />
-        <StatTile label="Revenue collected" value={formatCurrency(revenue)} />
         <StatTile
           label="Orders, last 30 days"
           value={recentCount.toLocaleString("en-IN")}
+        />
+        <StatTile
+          label="Collected"
+          value={formatCurrency(Number(money.collected))}
+        />
+        <StatTile
+          label="Outstanding"
+          value={formatCurrency(Number(money.outstanding))}
+          hint={`${Number(money.orders_awaiting_payment).toLocaleString("en-IN")} order(s) awaiting payment`}
         />
       </div>
 
@@ -84,11 +107,20 @@ export default async function AdminOverviewPage() {
   );
 }
 
-function StatTile({ label, value }: { label: string; value: string }) {
+function StatTile({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+}) {
   return (
     <div className="rounded border p-4">
       <p className="text-sm text-zinc-500">{label}</p>
       <p className="mt-1 text-2xl font-semibold">{value}</p>
+      {hint && <p className="mt-1 text-xs text-zinc-500">{hint}</p>}
     </div>
   );
 }

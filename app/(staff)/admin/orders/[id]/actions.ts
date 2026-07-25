@@ -1,9 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { ORDER_STATUSES } from "@/lib/constants";
+import { ORDER_STATUSES, PAYMENT_MODES, type PaymentMode } from "@/lib/constants";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { parseMoney, parseOptionalText, parseRequiredText } from "@/lib/validation";
 
 // Every mutation below chains .select().single() and checks the result
 // instead of trusting `error === null`. RLS ("staff manage city orders")
@@ -151,4 +152,47 @@ export async function setPromisedDate(formData: FormData) {
   }
 
   revalidatePath(`/admin/orders/${orderId}`);
+}
+
+export async function recordPayment(formData: FormData) {
+  await requireStaff();
+  const orderId = parseRequiredText(formData.get("order_id"), "Order");
+  const amount = parseMoney(formData.get("amount"), "Amount");
+  const mode = formData.get("mode") as string;
+  const gatewayRef = parseOptionalText(formData.get("gateway_ref"));
+
+  if (!PAYMENT_MODES.includes(mode as PaymentMode)) {
+    throw new Error("Invalid payment mode");
+  }
+  if (amount <= 0) {
+    throw new Error("Payment amount must be greater than zero");
+  }
+
+  const supabase = await createClient();
+
+  // record_payment() inserts the ledger row and recomputes the order's
+  // payment_status from the sum of successful payments — one transaction, so
+  // the status can never disagree with the ledger behind it. It also rejects
+  // collecting more than the order total.
+  const { error } = await supabase.rpc("record_payment", {
+    p_order_id: orderId,
+    p_amount: amount,
+    p_mode: mode,
+    p_gateway_ref: gatewayRef,
+  });
+
+  if (error) {
+    console.error("[record-payment]", error);
+    // The function's own RAISE EXCEPTION messages (SQLSTATE P0001) are
+    // written for staff to read — e.g. "that would collect ₹200 more than
+    // the order total". Anything else is internal detail.
+    throw new Error(
+      error.code === "P0001"
+        ? error.message
+        : "Couldn't record this payment. Please try again."
+    );
+  }
+
+  revalidatePath(`/admin/orders/${orderId}`);
+  revalidatePath("/admin");
 }

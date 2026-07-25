@@ -31,3 +31,28 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
 // Statuses a customer can still cancel from — must match the DB trigger
 // restrict_customer_order_update() in 0003_production_hardening.sql.
 export const CANCELLABLE_STATUSES: readonly OrderStatus[] = ["placed", "confirmed"];
+
+export const PAYMENT_MODES = [
+  "cash",
+  "upi",
+  "card",
+  "netbanking",
+  "wallet",
+] as const;
+
+export type PaymentMode = (typeof PAYMENT_MODES)[number];
+
+export const PAYMENT_MODE_LABELS: Record<PaymentMode, string> = {
+  cash: "Cash",
+  upi: "UPI",
+  card: "Card",
+  netbanking: "Net banking",
+  wallet: "Wallet",
+};
+
+export const PAYMENT_STATUS_LABELS: Record<string, string> = {
+  pending: "Unpaid",
+  partial: "Partially paid",
+  paid: "Paid",
+  refunded: "Refunded",
+};

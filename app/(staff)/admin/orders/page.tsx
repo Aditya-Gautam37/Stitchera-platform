@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { ORDER_STATUSES, ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/constants";
+import {
+  ORDER_STATUSES,
+  ORDER_STATUS_LABELS,
+  PAYMENT_STATUS_LABELS,
+  type OrderStatus,
+} from "@/lib/constants";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
 
@@ -22,9 +27,10 @@ export default async function OrdersPage({
   // and to every city for admin — no explicit city filter needed here.
   let query = supabase
     .from("orders")
-    .select("id, order_number, status, grand_total, contact_phone, placed_at", {
-      count: "exact",
-    })
+    .select(
+      "id, order_number, status, payment_status, grand_total, contact_phone, placed_at",
+      { count: "exact" }
+    )
     .order("placed_at", { ascending: false })
     .range(from, to);
 
@@ -81,6 +87,7 @@ export default async function OrdersPage({
           <tr className="border-b text-left text-zinc-500">
             <th className="py-2 font-medium">Order</th>
             <th className="py-2 font-medium">Status</th>
+            <th className="py-2 font-medium">Payment</th>
             <th className="py-2 font-medium">Contact</th>
             <th className="py-2 font-medium">Total</th>
             <th className="py-2 font-medium">Placed</th>
@@ -99,6 +106,13 @@ export default async function OrdersPage({
               </td>
               <td className="py-2">
                 {ORDER_STATUS_LABELS[o.status as OrderStatus]}
+              </td>
+              <td
+                className={
+                  o.payment_status === "paid" ? "py-2" : "py-2 text-amber-600"
+                }
+              >
+                {PAYMENT_STATUS_LABELS[o.payment_status] ?? o.payment_status}
               </td>
               <td className="py-2">{o.contact_phone}</td>
               <td className="py-2">₹{o.grand_total}</td>
