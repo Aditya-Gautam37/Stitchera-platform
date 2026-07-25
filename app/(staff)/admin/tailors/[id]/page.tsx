@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
-import { updateTailor } from "../actions";
+import { linkTailorProfile, updateTailor } from "../actions";
 
 export default async function TailorDetailPage({
   params,
@@ -35,6 +35,45 @@ export default async function TailorDetailPage({
         <p className="text-sm text-zinc-500">
           {tailor.total_orders} orders · rating {tailor.rating ?? "—"}
         </p>
+      </div>
+
+      <div className="max-w-md rounded border p-4">
+        <h2 className="text-sm font-medium">App login</h2>
+        {tailor.profile_id ? (
+          <p className="mt-1 text-sm text-zinc-500">
+            Linked to an account — this tailor can sign in at /tailor.
+          </p>
+        ) : (
+          <>
+            <p className="mt-1 text-sm text-zinc-500">
+              No account linked yet — this tailor cannot sign in. Link them to
+              an existing account by phone number (they must have already
+              signed up in the app).
+            </p>
+            <form
+              action={linkTailorProfile}
+              className="mt-3 flex items-end gap-2"
+            >
+              <input type="hidden" name="tailor_id" value={tailor.id} />
+              <label className="flex flex-1 flex-col gap-1 text-sm">
+                Account phone number
+                <input
+                  type="tel"
+                  name="phone"
+                  required
+                  placeholder="+91..."
+                  className="rounded border px-3 py-2"
+                />
+              </label>
+              <button
+                type="submit"
+                className="rounded bg-black px-4 py-2 text-sm text-white"
+              >
+                Link
+              </button>
+            </form>
+          </>
+        )}
       </div>
 
       <form action={updateTailor} className="flex max-w-md flex-col gap-4">

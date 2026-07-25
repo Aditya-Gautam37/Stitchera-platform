@@ -9,14 +9,15 @@ export async function SiteHeader() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let profile: { fullName: string | null; role: string } | null = null;
+  let profile: { fullName: string | null; role: string; isTailor: boolean } | null = null;
   if (user) {
-    const { data } = await supabase
-      .from("profiles")
-      .select("full_name, role")
-      .eq("id", user.id)
-      .single();
-    if (data) profile = { fullName: data.full_name, role: data.role };
+    const [{ data }, { data: tailor }] = await Promise.all([
+      supabase.from("profiles").select("full_name, role").eq("id", user.id).single(),
+      supabase.from("tailors").select("id").eq("profile_id", user.id).maybeSingle(),
+    ]);
+    if (data) {
+      profile = { fullName: data.full_name, role: data.role, isTailor: !!tailor };
+    }
   }
 
   const { data: city } = await supabase

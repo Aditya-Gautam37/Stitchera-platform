@@ -7,6 +7,7 @@ import { logout } from "@/lib/actions/auth";
 type MenuProfile = {
   fullName: string | null;
   role: string;
+  isTailor: boolean;
 } | null;
 
 export function AccountMenu({ profile }: { profile: MenuProfile }) {
@@ -34,7 +35,14 @@ export function AccountMenu({ profile }: { profile: MenuProfile }) {
     );
   }
 
-  const dashboardHref = profile.role === "customer" ? "/dashboard" : "/admin";
+  // A tailor identity is independent of profiles.role (see 0012) — checked
+  // first so a customer account that's also a linked tailor lands there,
+  // matching the redirect the (customer) layout already applies.
+  const dashboardHref = profile.isTailor
+    ? "/tailor"
+    : profile.role === "customer"
+      ? "/dashboard"
+      : "/admin";
 
   return (
     <div className="relative" ref={ref}>
@@ -65,7 +73,7 @@ export function AccountMenu({ profile }: { profile: MenuProfile }) {
           >
             Dashboard
           </Link>
-          {profile.role === "customer" && (
+          {profile.role === "customer" && !profile.isTailor && (
             <>
               <Link
                 href="/orders"

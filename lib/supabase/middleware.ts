@@ -10,6 +10,7 @@ const PROTECTED_PREFIXES = [
   "/admin",
   "/tailor-registration",
   "/delivery-registration",
+  "/tailor",
 ];
 
 export async function updateSession(request: NextRequest) {

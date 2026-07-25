@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { isValidPhone, normalizePhone } from "@/lib/phone";
 import {
   parseOptionalText,
   parsePercent,
@@ -126,6 +127,72 @@ export async function updateTailor(formData: FormData) {
   if (error || !updated) {
     console.error("[update-tailor]", error);
     throw new Error("Couldn't save changes. Please try again.");
+  }
+
+  revalidatePath(`/admin/tailors/${tailorId}`);
+}
+
+// Tailors created here directly (as opposed to approved from a self-serve
+// partner_applications submission) get profile_id = null — there's no app
+// account for them to sign into /tailor with. This is the only way to give
+// one a login after the fact: point it at an existing customer account by
+// phone, same "they must already have an account" constraint promoteByPhone
+// (../staff/actions.ts) uses for staff roles.
+export async function linkTailorProfile(formData: FormData) {
+  const profile = await requireStaff();
+  if (profile.role === "pickup_agent") throw new Error("Not authorized");
+
+  const tailorId = parseRequiredText(formData.get("tailor_id"), "Tailor");
+  const rawPhone = parseRequiredText(formData.get("phone"), "Phone number");
+  const phone = normalizePhone(rawPhone);
+  if (!isValidPhone(phone)) {
+    throw new Error("That doesn't look like a valid phone number");
+  }
+
+  const supabase = await createClient();
+
+  if (profile.role !== "admin") {
+    const { data: tailor } = await supabase
+      .from("tailors")
+      .select("city_id")
+      .eq("id", tailorId)
+      .single();
+    if (!tailor || tailor.city_id !== profile.city_id) {
+      throw new Error("Not authorized to edit this tailor");
+    }
+  }
+
+  const { data: account } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("phone", phone)
+    .single();
+
+  if (!account) {
+    throw new Error(
+      "No account found with that phone number — they must sign up in the app first."
+    );
+  }
+
+  const { data: alreadyLinked } = await supabase
+    .from("tailors")
+    .select("id")
+    .eq("profile_id", account.id)
+    .maybeSingle();
+  if (alreadyLinked) {
+    throw new Error("That account is already linked to a different tailor.");
+  }
+
+  const { data: updated, error } = await supabase
+    .from("tailors")
+    .update({ profile_id: account.id })
+    .eq("id", tailorId)
+    .select("id")
+    .single();
+
+  if (error || !updated) {
+    console.error("[link-tailor-profile]", error);
+    throw new Error("Couldn't link this account. Please try again.");
   }
 
   revalidatePath(`/admin/tailors/${tailorId}`);

@@ -24,6 +24,17 @@ export default async function CustomerLayout({
   if (profile && profile.role !== "customer") redirect("/admin");
   if (!profile?.full_name) redirect("/onboarding");
 
+  // A tailor identity is "a tailors row with profile_id = you," independent
+  // of profiles.role (see 0012) — so this check can't live in the role
+  // branch above. Whoever's logged in, if they're also a linked tailor,
+  // their default area is /tailor, not the customer dashboard.
+  const { data: tailor } = await supabase
+    .from("tailors")
+    .select("id")
+    .eq("profile_id", user.id)
+    .maybeSingle();
+  if (tailor) redirect("/tailor");
+
   return (
     <div className="flex min-h-full flex-col">
       <SiteHeader />
