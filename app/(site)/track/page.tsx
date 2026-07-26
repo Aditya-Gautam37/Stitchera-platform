@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { type OrderStatus } from "@/lib/constants";
 import { OrderTimeline } from "@/components/site/order-timeline";
+import { buttonClass, cardClass } from "@/components/ui/styles";
 
 export default async function TrackOrderPage({
   searchParams,
@@ -61,10 +62,7 @@ export default async function TrackOrderPage({
             className="rounded border border-line bg-paper px-3 py-2 text-sm"
           />
         </label>
-        <button
-          type="submit"
-          className="rounded-full bg-indigo px-4 py-2 text-sm font-medium text-paper hover:bg-indigo-strong"
-        >
+        <button type="submit" className={buttonClass("primary", "sm")}>
           Track
         </button>
       </form>
@@ -73,7 +71,7 @@ export default async function TrackOrderPage({
         <p className="mt-4 text-sm text-thread-red">{notFoundMessage}</p>
       )}
       {result && (
-        <div className="mt-6 rounded-2xl border border-line bg-paper p-5">
+        <div className={`mt-6 p-5 ${cardClass}`}>
           <p className="font-mono text-sm text-ink-soft">{result.order_number}</p>
           <div className="mt-4">
             <OrderTimeline status={result.status as OrderStatus} />

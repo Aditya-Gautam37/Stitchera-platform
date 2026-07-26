@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MeasurementFields } from "@/components/measurement-fields";
 import { SubmitButton } from "@/components/submit-button";
+import { buttonClass } from "@/components/ui/styles";
 import { createMeasurement } from "../actions";
 
 export default function NewMeasurementPage() {
@@ -10,10 +11,7 @@ export default function NewMeasurementPage() {
       <form action={createMeasurement} className="flex flex-col gap-5">
         <MeasurementFields />
         <div className="flex items-center gap-4">
-          <SubmitButton
-            pendingText="Saving..."
-            className="rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong disabled:opacity-50"
-          >
+          <SubmitButton pendingText="Saving..." className={buttonClass("primary", "md")}>
             Save measurements
           </SubmitButton>
           <Link href="/measurements" className="text-sm text-ink-soft underline">

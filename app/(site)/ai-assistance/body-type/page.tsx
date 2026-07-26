@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { GarmentIcon, silhouetteFor } from "@/components/site/garment-icon";
+import { buttonClass, cardClass } from "@/components/ui/styles";
 
 const FIT_OPTIONS = [
   { value: "fitted", label: "Fitted", hint: "Close to the body, a tailored silhouette." },
@@ -79,7 +80,7 @@ export default async function BodyTypePage({
         catalog — no upload, no wait.
       </p>
 
-      <form className="mt-6 flex flex-col gap-6 rounded border border-line bg-paper p-5">
+      <form className={`mt-6 flex flex-col gap-6 p-5 ${cardClass}`}>
         <fieldset className="flex flex-col gap-2">
           <legend className="text-sm font-medium text-ink">
             What are you getting made or altered?
@@ -134,10 +135,7 @@ export default async function BodyTypePage({
           I already have measurements saved for this
         </label>
 
-        <button
-          type="submit"
-          className="w-fit rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong"
-        >
+        <button type="submit" className={`w-fit ${buttonClass("primary", "sm")}`}>
           Show my matches
         </button>
       </form>
@@ -170,10 +168,7 @@ export default async function BodyTypePage({
           ) : (
             <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               {matches.map((service) => (
-                <li
-                  key={service.id}
-                  className="flex flex-col gap-3 rounded border border-line bg-paper p-4"
-                >
+                <li key={service.id} className={`flex flex-col gap-3 p-4 ${cardClass}`}>
                   <GarmentIcon
                     type={silhouetteFor(service.garment_type)}
                     className="h-9 w-9 text-indigo"
@@ -187,7 +182,7 @@ export default async function BodyTypePage({
                   </div>
                   <Link
                     href={`/book?service=${service.id}&note=${encodeURIComponent(note)}`}
-                    className="mt-auto w-fit rounded-full bg-indigo px-4 py-2 text-sm font-medium text-paper hover:bg-indigo-strong"
+                    className={`mt-auto w-fit ${buttonClass("primary", "sm")}`}
                   >
                     Book this
                   </Link>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SubmitButton } from "@/components/submit-button";
 import { PAYMENT_PREFERENCE_LABELS, PAYMENT_PREFERENCES } from "@/lib/constants";
+import { buttonClass, cardClass } from "@/components/ui/styles";
 import { createBooking } from "./actions";
 
 export default async function BookPage({
@@ -206,7 +207,7 @@ export default async function BookPage({
 
         <SubmitButton
           pendingText="Placing booking..."
-          className="rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong disabled:opacity-50"
+          className={buttonClass("primary", "md")}
         >
           Place booking
         </SubmitButton>
@@ -227,7 +228,7 @@ export default async function BookPage({
           />
         </div>
 
-        <div className="rounded-2xl border border-line bg-paper p-5 text-sm text-ink-soft">
+        <div className={`p-5 text-sm text-ink-soft ${cardClass}`}>
           <p className="font-medium text-ink">How this is charged</p>
           <ul className="mt-2 flex flex-col gap-1.5">
             <li>Service price — set by the tailor</li>

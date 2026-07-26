@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { buttonClass } from "@/components/ui/styles";
 import "./globals.css";
 
 export default function GlobalError({
@@ -22,10 +23,7 @@ export default function GlobalError({
           <p className="text-sm text-ink-soft">
             An unexpected error occurred. Please try again.
           </p>
-          <button
-            onClick={reset}
-            className="rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong"
-          >
+          <button onClick={reset} className={buttonClass("primary", "md")}>
             Try again
           </button>
         </main>

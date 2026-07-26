@@ -4,6 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import { formatMeasurementSummary } from "@/lib/measurements";
 import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/constants";
 import { SubmitButton } from "@/components/submit-button";
+import { Badge } from "@/components/ui/badge";
+import { buttonClass, cardClass } from "@/components/ui/styles";
+import { ORDER_STATUS_TONE } from "@/lib/status-tone";
 import { markOrderReady } from "./actions";
 
 export default async function TailorOrderDetailPage({
@@ -33,14 +36,17 @@ export default async function TailorOrderDetailPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-display text-2xl font-bold text-ink">
+        <h1 className="flex items-center gap-2 font-display text-2xl font-bold text-ink">
           Order {order.order_number}
+          <Badge tone={ORDER_STATUS_TONE[status]}>
+            {ORDER_STATUS_LABELS[status]}
+          </Badge>
         </h1>
-        <p className="text-sm text-ink-soft">
-          {ORDER_STATUS_LABELS[status]}
-          {order.promised_date &&
-            ` · Due ${new Date(order.promised_date).toLocaleDateString()}`}
-        </p>
+        {order.promised_date && (
+          <p className="text-sm text-ink-soft">
+            Due {new Date(order.promised_date).toLocaleDateString()}
+          </p>
+        )}
         <p className="text-sm text-ink-soft">
           Delivery area pincode: {order.address_pincode}
         </p>
@@ -60,7 +66,7 @@ export default async function TailorOrderDetailPage({
               ? item.measurements[0]
               : item.measurements;
             return (
-              <li key={item.id} className="rounded border border-line bg-paper p-4">
+              <li key={item.id} className={`p-4 ${cardClass}`}>
                 <p className="font-medium text-ink">
                   {service?.name} × {item.qty}
                 </p>
@@ -95,7 +101,7 @@ export default async function TailorOrderDetailPage({
           <input type="hidden" name="order_id" value={order.id} />
           <SubmitButton
             pendingText="Marking ready..."
-            className="w-fit rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong disabled:opacity-50"
+            className={buttonClass("primary", "md")}
           >
             Mark ready for delivery
           </SubmitButton>

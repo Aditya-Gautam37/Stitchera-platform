@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { type MeasurementValues } from "@/lib/measurements";
 import { MeasurementFields } from "@/components/measurement-fields";
 import { SubmitButton } from "@/components/submit-button";
+import { buttonClass } from "@/components/ui/styles";
 import { updateMeasurement } from "../actions";
 
 export default async function EditMeasurementPage({
@@ -41,10 +42,7 @@ export default async function EditMeasurementPage({
           }}
         />
         <div className="flex items-center gap-4">
-          <SubmitButton
-            pendingText="Saving..."
-            className="rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong disabled:opacity-50"
-          >
+          <SubmitButton pendingText="Saving..." className={buttonClass("primary", "md")}>
             Save changes
           </SubmitButton>
           <Link href="/measurements" className="text-sm text-ink-soft underline">

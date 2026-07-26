@@ -2,6 +2,9 @@ import Link from "next/link";
 import { requireTailor } from "@/lib/dal/tailor";
 import { createClient } from "@/lib/supabase/server";
 import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/constants";
+import { Badge } from "@/components/ui/badge";
+import { cardClass } from "@/components/ui/styles";
+import { ORDER_STATUS_TONE, TAILOR_STATUS_TONE } from "@/lib/status-tone";
 
 export default async function TailorOverviewPage() {
   const tailor = await requireTailor();
@@ -22,24 +25,24 @@ export default async function TailorOverviewPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="font-display text-2xl font-bold text-ink">
+        <h1 className="flex items-center gap-2 font-display text-2xl font-bold text-ink">
           Welcome, {tailor.name}
+          <Badge tone={TAILOR_STATUS_TONE[tailor.status] ?? "neutral"}>
+            {tailor.status === "active" ? "Active" : tailor.status.replace("_", " ")}
+          </Badge>
         </h1>
-        <p className="text-sm text-ink-soft">
-          {tailor.status === "active" ? "Active" : tailor.status.replace("_", " ")}
-        </p>
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        <div className="rounded border border-line bg-paper p-4">
+        <div className={`p-4 ${cardClass}`}>
           <p className="text-sm text-ink-soft">Needs stitching</p>
           <p className="mt-1 text-2xl font-semibold text-ink">{needsWork.length}</p>
         </div>
-        <div className="rounded border border-line bg-paper p-4">
+        <div className={`p-4 ${cardClass}`}>
           <p className="text-sm text-ink-soft">Active orders</p>
           <p className="mt-1 text-2xl font-semibold text-ink">{active.length}</p>
         </div>
-        <div className="rounded border border-line bg-paper p-4">
+        <div className={`p-4 ${cardClass}`}>
           <p className="text-sm text-ink-soft">All-time orders</p>
           <p className="mt-1 text-2xl font-semibold text-ink">{rows.length}</p>
         </div>
@@ -57,14 +60,19 @@ export default async function TailorOverviewPage() {
               <li key={o.id} className="py-2">
                 <Link
                   href={`/tailor/orders/${o.id}`}
-                  className="flex justify-between text-sm text-ink hover:text-indigo"
+                  className="flex items-center justify-between text-sm text-ink hover:text-indigo"
                 >
-                  <span>{o.order_number}</span>
-                  <span className="text-ink-soft">
-                    {o.promised_date
-                      ? `Due ${new Date(o.promised_date).toLocaleDateString()}`
-                      : ORDER_STATUS_LABELS[o.status as OrderStatus]}
+                  <span className="flex items-center gap-2">
+                    {o.order_number}
+                    <Badge tone={ORDER_STATUS_TONE[o.status as OrderStatus]}>
+                      {ORDER_STATUS_LABELS[o.status as OrderStatus]}
+                    </Badge>
                   </span>
+                  {o.promised_date && (
+                    <span className="text-ink-soft">
+                      Due {new Date(o.promised_date).toLocaleDateString()}
+                    </span>
+                  )}
                 </Link>
               </li>
             ))}

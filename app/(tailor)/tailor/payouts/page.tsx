@@ -1,5 +1,7 @@
 import { requireTailor } from "@/lib/dal/tailor";
 import { createClient } from "@/lib/supabase/server";
+import { Badge } from "@/components/ui/badge";
+import { cardClass } from "@/components/ui/styles";
 
 function formatINR(amount: number) {
   return `₹${amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
@@ -28,11 +30,11 @@ export default async function TailorPayoutsPage() {
       <h1 className="font-display text-2xl font-bold text-ink">Payouts</h1>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="rounded border border-line bg-paper p-4">
+        <div className={`p-4 ${cardClass}`}>
           <p className="text-sm text-ink-soft">Paid to date</p>
           <p className="mt-1 text-2xl font-semibold text-ink">{formatINR(totalPaid)}</p>
         </div>
-        <div className="rounded border border-line bg-paper p-4">
+        <div className={`p-4 ${cardClass}`}>
           <p className="text-sm text-ink-soft">Pending</p>
           <p className="mt-1 text-2xl font-semibold text-ink">{formatINR(totalPending)}</p>
         </div>
@@ -63,13 +65,11 @@ export default async function TailorPayoutsPage() {
                 <p className="text-sm font-semibold text-ink">
                   {formatINR(Number(p.net_payable))}
                 </p>
-                <p
-                  className={`text-xs ${p.paid_at ? "text-ink-soft" : "text-marigold-strong"}`}
-                >
+                <Badge tone={p.paid_at ? "active" : "attention"}>
                   {p.paid_at
                     ? `Paid ${new Date(p.paid_at).toLocaleDateString()}`
                     : "Pending"}
-                </p>
+                </Badge>
               </div>
             </li>
           ))}

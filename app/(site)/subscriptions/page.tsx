@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { PAYMENT_PREFERENCE_LABELS, PAYMENT_PREFERENCES } from "@/lib/constants";
 import { SubmitButton } from "@/components/submit-button";
+import { Badge } from "@/components/ui/badge";
+import { buttonClass, cardClass } from "@/components/ui/styles";
 import { purchaseSubscription } from "./actions";
 
 export default async function SubscriptionsPage({
@@ -66,18 +68,14 @@ export default async function SubscriptionsPage({
           return (
             <div
               key={plan.key}
-              className={`flex flex-col gap-3 rounded border p-5 ${
-                isCurrent ? "border-indigo" : "border-line"
+              className={`flex flex-col gap-3 p-5 ${cardClass} ${
+                isCurrent ? "border-indigo" : ""
               }`}
             >
               <div>
-                <p className="font-display text-xl font-bold text-ink">
+                <p className="flex items-center gap-2 font-display text-xl font-bold text-ink">
                   {plan.name}
-                  {isCurrent && (
-                    <span className="ml-2 rounded-full bg-indigo px-2 py-0.5 text-xs font-normal text-paper">
-                      Current plan
-                    </span>
-                  )}
+                  {isCurrent && <Badge tone="active">Current plan</Badge>}
                 </p>
                 <p className="text-sm text-ink-soft">{plan.tagline}</p>
               </div>
@@ -110,7 +108,7 @@ export default async function SubscriptionsPage({
                   </fieldset>
                   <SubmitButton
                     pendingText="Activating..."
-                    className="mt-1 w-fit rounded-full bg-indigo px-4 py-2 text-sm font-medium text-paper hover:bg-indigo-strong disabled:opacity-50"
+                    className={`mt-1 w-fit ${buttonClass("primary", "sm")}`}
                   >
                     {currentPlan ? "Switch to this plan" : "Subscribe"}
                   </SubmitButton>

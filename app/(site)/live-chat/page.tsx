@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { ChatWindow } from "@/components/chat/chat-window";
+import { buttonClass } from "@/components/ui/styles";
 
 export default async function LiveChatPage() {
   const supabase = await createClient();
@@ -17,7 +18,7 @@ export default async function LiveChatPage() {
         </p>
         <Link
           href="/login?next=/live-chat"
-          className="mt-6 inline-block rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong"
+          className={`mt-6 ${buttonClass("primary", "sm")}`}
         >
           Sign in
         </Link>

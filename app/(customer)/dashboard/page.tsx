@@ -2,6 +2,9 @@ import Link from "next/link";
 import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 import { SubmitButton } from "@/components/submit-button";
+import { Badge } from "@/components/ui/badge";
+import { buttonClass } from "@/components/ui/styles";
+import { ORDER_STATUS_TONE } from "@/lib/status-tone";
 import { requestAccountDeletion } from "./actions";
 
 export default async function DashboardPage() {
@@ -40,16 +43,10 @@ export default async function DashboardPage() {
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <Link
-          href="/book"
-          className="rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong"
-        >
+        <Link href="/book" className={buttonClass("primary", "md")}>
           Book a service
         </Link>
-        <Link
-          href="/measurements"
-          className="rounded-full border border-line px-5 py-2.5 text-sm font-medium text-ink hover:border-indigo"
-        >
+        <Link href="/measurements" className={buttonClass("secondary", "md")}>
           My measurements
         </Link>
       </div>
@@ -66,11 +63,13 @@ export default async function DashboardPage() {
               <li key={order.id} className="py-3">
                 <Link
                   href={`/orders/${order.id}`}
-                  className="flex justify-between text-sm text-ink hover:text-indigo"
+                  className="flex items-center justify-between text-sm text-ink hover:text-indigo"
                 >
-                  <span>
-                    {order.order_number} ·{" "}
-                    {ORDER_STATUS_LABELS[order.status as OrderStatus]}
+                  <span className="flex items-center gap-2">
+                    {order.order_number}
+                    <Badge tone={ORDER_STATUS_TONE[order.status as OrderStatus]}>
+                      {ORDER_STATUS_LABELS[order.status as OrderStatus]}
+                    </Badge>
                   </span>
                   <span className="font-medium">₹{order.grand_total}</span>
                 </Link>
@@ -108,7 +107,7 @@ export default async function DashboardPage() {
             </label>
             <SubmitButton
               pendingText="Submitting..."
-              className="w-fit rounded-full border border-thread-red px-4 py-2 text-sm text-thread-red disabled:opacity-50"
+              className={`w-fit ${buttonClass("danger", "sm")}`}
             >
               Request account deletion
             </SubmitButton>

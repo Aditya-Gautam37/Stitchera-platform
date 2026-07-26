@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { sendChatMessage } from "@/lib/actions/chat";
+import { buttonClass } from "@/components/ui/styles";
 
 export type ChatMessage = {
   id: number;
@@ -117,7 +118,7 @@ export function ChatWindow({
           <button
             type="submit"
             disabled={isPending || !draft.trim()}
-            className="rounded-full bg-indigo px-5 py-2 text-sm font-medium text-paper hover:bg-indigo-strong disabled:opacity-50"
+            className={buttonClass("primary", "sm")}
           >
             Send
           </button>

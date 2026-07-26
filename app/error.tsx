@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { buttonClass } from "@/components/ui/styles";
 
 export default function ErrorPage({
   error,
@@ -19,10 +20,7 @@ export default function ErrorPage({
       <p className="text-sm text-ink-soft">
         {error.message || "An unexpected error occurred. Please try again."}
       </p>
-      <button
-        onClick={reset}
-        className="rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong"
-      >
+      <button onClick={reset} className={buttonClass("primary", "md")}>
         Try again
       </button>
     </main>

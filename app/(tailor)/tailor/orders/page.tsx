@@ -2,6 +2,8 @@ import Link from "next/link";
 import { requireTailor } from "@/lib/dal/tailor";
 import { createClient } from "@/lib/supabase/server";
 import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/constants";
+import { Badge } from "@/components/ui/badge";
+import { ORDER_STATUS_TONE } from "@/lib/status-tone";
 
 export default async function TailorOrdersPage() {
   const tailor = await requireTailor();
@@ -29,9 +31,9 @@ export default async function TailorOrdersPage() {
                 className="flex items-center justify-between text-sm text-ink hover:text-indigo"
               >
                 <span>{o.order_number}</span>
-                <span className="text-ink-soft">
+                <Badge tone={ORDER_STATUS_TONE[o.status as OrderStatus]}>
                   {ORDER_STATUS_LABELS[o.status as OrderStatus]}
-                </span>
+                </Badge>
               </Link>
             </li>
           ))}

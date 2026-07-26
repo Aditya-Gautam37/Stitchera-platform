@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
+import { Badge } from "@/components/ui/badge";
+import { ORDER_STATUS_TONE } from "@/lib/status-tone";
 
 export default async function OrdersPage() {
   const supabase = await createClient();
@@ -25,11 +27,13 @@ export default async function OrdersPage() {
             <li key={order.id} className="py-3">
               <Link
                 href={`/orders/${order.id}`}
-                className="flex justify-between text-sm text-ink hover:text-indigo"
+                className="flex items-center justify-between text-sm text-ink hover:text-indigo"
               >
-                <span>
-                  {order.order_number} ·{" "}
-                  {ORDER_STATUS_LABELS[order.status as OrderStatus]}
+                <span className="flex items-center gap-2">
+                  {order.order_number}
+                  <Badge tone={ORDER_STATUS_TONE[order.status as OrderStatus]}>
+                    {ORDER_STATUS_LABELS[order.status as OrderStatus]}
+                  </Badge>
                 </span>
                 <span className="font-medium">₹{order.grand_total}</span>
               </Link>

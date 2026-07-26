@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { buttonClass, cardClass } from "@/components/ui/styles";
 
 const HOW_IT_WORKS = [
   {
@@ -74,25 +75,16 @@ export default async function Home() {
                 placeholder="Search kurta, blouse…"
                 className="w-full rounded-full border border-line bg-paper px-5 py-3 text-sm text-ink placeholder:text-ink-soft"
               />
-              <button
-                type="submit"
-                className="shrink-0 rounded-full bg-indigo px-5 py-3 text-sm font-semibold text-paper hover:bg-indigo-strong"
-              >
+              <button type="submit" className={`shrink-0 ${buttonClass("primary", "lg")}`}>
                 Search
               </button>
             </form>
 
             <div className="flex flex-wrap gap-3">
-              <Link
-                href="/book"
-                className="rounded-full bg-indigo px-6 py-3 text-sm font-semibold text-paper hover:bg-indigo-strong"
-              >
+              <Link href="/book" className={buttonClass("primary", "lg")}>
                 Book a pickup
               </Link>
-              <Link
-                href="/services"
-                className="rounded-full border border-line px-6 py-3 text-sm font-medium text-ink hover:border-indigo"
-              >
+              <Link href="/services" className={buttonClass("secondary", "lg")}>
                 Browse services
               </Link>
             </div>
@@ -133,7 +125,7 @@ export default async function Home() {
             <Link
               key={service.id}
               href={`/book?service=${service.id}`}
-              className="flex flex-col gap-3 overflow-hidden rounded-2xl border border-line bg-paper transition-colors hover:border-indigo"
+              className={`flex flex-col gap-3 overflow-hidden transition-colors hover:border-indigo ${cardClass}`}
             >
               <div className="relative aspect-[4/3] w-full">
                 {/* TODO: real photography of this garment — real Indian
@@ -227,7 +219,7 @@ export default async function Home() {
       {/* Registration CTAs */}
       <section>
         <div className="mx-auto grid max-w-6xl gap-6 px-4 py-14 sm:grid-cols-2">
-          <div className="rounded-2xl border border-line bg-paper p-6">
+          <div className={`p-6 ${cardClass}`}>
             <p className="font-display text-lg font-bold text-ink">
               Are you a tailor?
             </p>
@@ -237,12 +229,12 @@ export default async function Home() {
             </p>
             <Link
               href="/tailor-registration"
-              className="mt-4 inline-block rounded-full border border-line px-5 py-2 text-sm font-medium text-ink hover:border-indigo"
+              className={`mt-4 ${buttonClass("secondary", "sm")}`}
             >
               Register as a tailor
             </Link>
           </div>
-          <div className="rounded-2xl border border-line bg-paper p-6">
+          <div className={`p-6 ${cardClass}`}>
             <p className="font-display text-lg font-bold text-ink">
               Deliver for Stitchera
             </p>
@@ -251,7 +243,7 @@ export default async function Home() {
             </p>
             <Link
               href="/delivery-registration"
-              className="mt-4 inline-block rounded-full border border-line px-5 py-2 text-sm font-medium text-ink hover:border-indigo"
+              className={`mt-4 ${buttonClass("secondary", "sm")}`}
             >
               Register as a delivery partner
             </Link>

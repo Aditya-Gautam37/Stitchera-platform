@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatMeasurementSummary } from "@/lib/measurements";
 import { SubmitButton } from "@/components/submit-button";
+import { buttonClass } from "@/components/ui/styles";
 import { archiveMeasurement } from "./actions";
 
 export default async function MeasurementsPage() {
@@ -26,10 +27,7 @@ export default async function MeasurementsPage() {
             Save them once and reuse them on every order.
           </p>
         </div>
-        <Link
-          href="/measurements/new"
-          className="rounded-full bg-indigo px-4 py-2 text-sm font-medium text-paper hover:bg-indigo-strong"
-        >
+        <Link href="/measurements/new" className={buttonClass("primary", "sm")}>
           Add measurements
         </Link>
       </div>

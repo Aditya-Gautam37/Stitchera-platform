@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SubmitButton } from "@/components/submit-button";
+import { buttonClass } from "@/components/ui/styles";
 import { submitTailorApplication } from "@/lib/actions/partner-applications";
 
 export default async function TailorRegistrationPage({
@@ -163,7 +164,7 @@ function TailorForm({
       </label>
       <SubmitButton
         pendingText="Submitting..."
-        className="w-fit rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong disabled:opacity-50"
+        className={`w-fit ${buttonClass("primary", "sm")}`}
       >
         Submit application
       </SubmitButton>

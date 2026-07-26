@@ -1,3 +1,5 @@
+import { buttonClass } from "@/components/ui/styles";
+
 export default function ContactPage() {
   return (
     <div className="mx-auto max-w-xl px-4 py-16">
@@ -12,7 +14,7 @@ export default function ContactPage() {
         href="https://wa.me/910000000000"
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-6 inline-flex items-center gap-2 rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong"
+        className={`mt-6 ${buttonClass("primary", "sm")}`}
       >
         Message us on WhatsApp
       </a>

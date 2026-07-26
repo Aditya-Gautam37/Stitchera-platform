@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cardClass } from "@/components/ui/styles";
 
 const TOOLS = [
   {
@@ -29,7 +30,7 @@ export default function AiAssistancePage() {
           <li key={tool.href}>
             <Link
               href={tool.href}
-              className="block rounded border border-line bg-paper p-5 hover:border-indigo"
+              className={`block p-5 transition-colors hover:border-indigo ${cardClass}`}
             >
               <p className="font-display text-lg font-bold text-ink">
                 {tool.title}

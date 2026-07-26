@@ -13,6 +13,9 @@ import { createClient } from "@/lib/supabase/server";
 import { SubmitButton } from "@/components/submit-button";
 import { StarRatingInput } from "@/components/site/star-rating-input";
 import { OrderTimeline } from "@/components/site/order-timeline";
+import { Badge } from "@/components/ui/badge";
+import { buttonClass, cardClass } from "@/components/ui/styles";
+import { ORDER_STATUS_TONE, PAYMENT_STATUS_TONE } from "@/lib/status-tone";
 import { cancelOrder } from "./actions";
 import { submitReview } from "./review-actions";
 
@@ -95,12 +98,12 @@ export default async function OrderDetailPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-display text-2xl font-bold text-ink">
+        <h1 className="flex items-center gap-2 font-display text-2xl font-bold text-ink">
           Order {order.order_number}
+          <Badge tone={ORDER_STATUS_TONE[status]}>
+            {ORDER_STATUS_LABELS[status]}
+          </Badge>
         </h1>
-        <p className="text-sm text-ink-soft">
-          Status: {ORDER_STATUS_LABELS[status]}
-        </p>
         {order.cancel_reason && (
           <p className="text-sm text-ink-soft">Reason: {order.cancel_reason}</p>
         )}
@@ -179,10 +182,10 @@ export default async function OrderDetailPage({
 
       <div>
         <h2 className="text-lg font-medium text-ink">Payment</h2>
-        <div className="mt-1 flex flex-wrap gap-4 text-sm">
-          <span className="text-ink-soft">
+        <div className="mt-1 flex flex-wrap items-center gap-4 text-sm">
+          <Badge tone={PAYMENT_STATUS_TONE[order.payment_status] ?? "neutral"}>
             {PAYMENT_STATUS_LABELS[order.payment_status] ?? order.payment_status}
-          </span>
+          </Badge>
           <span className="text-ink">
             Paid <span className="font-mono font-medium">₹{paid.toFixed(2)}</span>
           </span>
@@ -233,7 +236,7 @@ export default async function OrderDetailPage({
             />
             <SubmitButton
               pendingText="Cancelling..."
-              className="w-fit rounded border border-thread-red px-3 py-1.5 text-sm text-thread-red disabled:opacity-50"
+              className={`w-fit ${buttonClass("danger", "sm")}`}
             >
               Cancel order
             </SubmitButton>
@@ -242,7 +245,7 @@ export default async function OrderDetailPage({
       )}
 
       {showReviewForm && (
-        <div className="rounded border border-line bg-paper p-4">
+        <div className={`p-4 ${cardClass}`}>
           <h2 className="font-display text-lg font-bold text-ink">
             How was it?
           </h2>
@@ -285,7 +288,7 @@ export default async function OrderDetailPage({
             )}
             <SubmitButton
               pendingText="Submitting..."
-              className="w-fit rounded-full bg-indigo px-5 py-2 text-sm font-medium text-paper hover:bg-indigo-strong disabled:opacity-50"
+              className={`w-fit ${buttonClass("primary", "sm")}`}
             >
               Submit review
             </SubmitButton>
