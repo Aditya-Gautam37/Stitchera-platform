@@ -106,7 +106,7 @@ export function OrderTimeline({
                 {stage.label}
               </p>
               {isCurrent && status === "qc_failed" && (
-                <p className="text-sm text-marigold-ink">
+                <p className="text-sm text-marigold-strong">
                   Sent back to the tailor for a quick fix
                 </p>
               )}

@@ -55,8 +55,13 @@ export default async function SubscriptionsPage({
         </p>
       )}
 
+      {!plans?.length ? (
+        <p className="mt-8 text-sm text-ink-soft">
+          No plans are available right now — check back soon.
+        </p>
+      ) : (
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {(plans ?? []).map((plan) => {
+        {plans.map((plan) => {
           const isCurrent = currentPlan === plan.key;
           return (
             <div
@@ -115,6 +120,7 @@ export default async function SubscriptionsPage({
           );
         })}
       </div>
+      )}
       <p className="mt-6 text-xs text-ink-soft">
         Online payment isn&apos;t live yet — our team confirms payment with
         you directly after you choose a plan.

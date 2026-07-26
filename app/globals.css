@@ -12,8 +12,21 @@
   --indigo-strong: #2b3170;
   --marigold: #e0932a;
   --marigold-ink: #6b430a;
+  /* WCAG audit: --marigold itself is a decorative fill/highlight color and
+     stays as-is (marigold-ink already reads fine on top of it, 3.44:1+).
+     Real marigold-toned TEXT/borders sitting directly on paper/cotton need
+     their own value per theme — marigold-ink is tuned dark for legibility
+     ON marigold, which is unreadable on dark-mode's own dark paper
+     (1.04:1, measured). --marigold-strong is that companion, computed to
+     clear 4.5:1 against paper in both themes. */
+  --marigold-strong: #6b430a;
   --thread-red: #a23b2e;
-  --line: #ddd7c8;
+  /* WCAG audit: #ddd7c8 measured 1.37:1 against --paper — well under the
+     3:1 WCAG 1.4.11 floor for form-input and interactive-element borders.
+     Darkened to clear 3:1 with margin. --line-soft is left alone: it's
+     only ever used for decorative list/section dividers (divide-line-soft),
+     which 1.4.11 doesn't apply to. */
+  --line: #998c6f;
   --line-soft: #e7e2d5;
   --focus: #2b3170;
 }
@@ -24,12 +37,16 @@
     --paper: #201f3a;
     --ink: #ece8dd;
     --ink-soft: #b3aec2;
-    --indigo: #7981d6;
+    /* WCAG audit: #7981d6 measured 4.49:1 against dark --paper — 0.01 under
+       the 4.5:1 floor, on the app's primary button/link color. Lightened
+       slightly to clear it with real margin. */
+    --indigo: #8089dc;
     --indigo-strong: #a2a8e6;
     --marigold: #f0a83e;
     --marigold-ink: #2a1c08;
+    --marigold-strong: #f0a83e;
     --thread-red: #d97362;
-    --line: #383659;
+    --line: #7572a3;
     --line-soft: #2b2a48;
     --focus: #a2a8e6;
   }
@@ -44,6 +61,7 @@
   --color-indigo-strong: var(--indigo-strong);
   --color-marigold: var(--marigold);
   --color-marigold-ink: var(--marigold-ink);
+  --color-marigold-strong: var(--marigold-strong);
   --color-thread-red: var(--thread-red);
   --color-line: var(--line);
   --color-line-soft: var(--line-soft);

@@ -12,6 +12,29 @@ type ServiceRow = {
   est_days: number;
 };
 
+// Search audit findings (12-service catalog, effort capped per the RC1
+// brief): case-insensitivity and partial-substring matching already work
+// as-is — ILIKE is inherently case-insensitive, and "%term%" already does
+// substring matching. Two real, simple gaps fixed here: the query was
+// never trimmed (a trailing space from a mobile keyboard silently breaks
+// an otherwise-correct search), and name_hi was never searched at all, so
+// typing a service's Hindi name returned nothing despite the data being
+// right there. Pluralization ("kurtas" not matching "Kurta Stitching") is
+// also simple enough to fix with one extra literal variant — anything
+// beyond that (stemming, fuzzy/pg_trgm matching) would be over-engineering
+// for this catalog size and is logged as a MEDIUM follow-up instead.
+function searchTermVariants(raw: string): string[] {
+  const trimmed = raw.trim();
+  if (!trimmed) return [];
+  const variants = new Set([trimmed]);
+  if (trimmed.length > 3 && trimmed.toLowerCase().endsWith("s")) {
+    variants.add(trimmed.slice(0, -1));
+  } else {
+    variants.add(`${trimmed}s`);
+  }
+  return Array.from(variants);
+}
+
 const SORTS = {
   featured: { label: "Featured", column: "sort_order" as const, ascending: true },
   price_asc: { label: "Price: low to high", column: "base_price" as const, ascending: true },
@@ -41,19 +64,26 @@ export default async function ServicesPage({
   let services: ServiceRow[] = [];
   let error;
 
-  if (q) {
-    // Two separate .ilike() calls rather than a hand-built .or() filter
-    // string — see the admin customer-search fix: interpolating raw input
-    // into PostgREST's filter DSL lets punctuation in the search box alter
-    // which clauses get parsed, not just what they match.
-    const [byName, byCategory] = await Promise.all([
-      base().ilike("name", `%${q}%`),
-      base().ilike("category", `%${q}%`),
-    ]);
-    error = byName.error ?? byCategory.error;
-    const merged = new Map<string, ServiceRow>(
-      [...(byName.data ?? []), ...(byCategory.data ?? [])].map((s) => [s.id, s])
+  const terms = q ? searchTermVariants(q) : [];
+
+  if (terms.length) {
+    // Separate .ilike() calls per column per term variant, merged in JS,
+    // rather than a hand-built .or() filter string — see the admin
+    // customer-search fix: interpolating raw input into PostgREST's filter
+    // DSL lets punctuation in the search box alter which clauses get
+    // parsed, not just what they match.
+    const results = await Promise.all(
+      terms.flatMap((term) => [
+        base().ilike("name", `%${term}%`),
+        base().ilike("name_hi", `%${term}%`),
+        base().ilike("category", `%${term}%`),
+      ])
     );
+    error = results.find((r) => r.error)?.error;
+    const merged = new Map<string, ServiceRow>();
+    for (const r of results) {
+      for (const row of r.data ?? []) merged.set(row.id, row);
+    }
     services = Array.from(merged.values());
   } else {
     const result = await base();
@@ -99,7 +129,7 @@ export default async function ServicesPage({
         <div className="flex flex-wrap gap-2">
           <Link
             href={withParam("category", null)}
-            className={`rounded-full border px-3.5 py-1.5 text-sm font-medium capitalize ${
+            className={`rounded-full border px-3.5 py-3 text-sm font-medium capitalize ${
               !category
                 ? "border-indigo bg-indigo text-paper"
                 : "border-line text-ink-soft hover:border-indigo"
@@ -111,7 +141,7 @@ export default async function ServicesPage({
             <Link
               key={c}
               href={withParam("category", c)}
-              className={`rounded-full border px-3.5 py-1.5 text-sm font-medium capitalize ${
+              className={`rounded-full border px-3.5 py-3 text-sm font-medium capitalize ${
                 category === c
                   ? "border-indigo bg-indigo text-paper"
                   : "border-line text-ink-soft hover:border-indigo"
@@ -132,7 +162,7 @@ export default async function ServicesPage({
             id="sort"
             name="sort"
             defaultValue={sortKey}
-            className="rounded border border-line bg-paper px-2 py-1.5"
+            className="rounded border border-line bg-paper px-2 py-3"
           >
             {Object.entries(SORTS).map(([key, s]) => (
               <option key={key} value={key}>

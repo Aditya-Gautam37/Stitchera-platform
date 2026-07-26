@@ -43,23 +43,12 @@ const TRUST_POINTS = [
 export default async function Home() {
   const supabase = await createClient();
 
-  const [{ data: services }, { count: activeTailors }, { count: activeServices }] =
-    await Promise.all([
-      supabase
-        .from("services")
-        .select("id, name, name_hi, garment_type, base_price, est_days")
-        .eq("is_active", true)
-        .order("sort_order")
-        .limit(6),
-      // public_tailors is the safe, column-limited view (0008) — a plain
-      // customer/anon session has no SELECT policy on the base tailors
-      // table at all.
-      supabase.from("public_tailors").select("id", { count: "exact", head: true }),
-      supabase
-        .from("services")
-        .select("id", { count: "exact", head: true })
-        .eq("is_active", true),
-    ]);
+  const { data: services } = await supabase
+    .from("services")
+    .select("id, name, name_hi, garment_type, base_price, est_days")
+    .eq("is_active", true)
+    .order("sort_order")
+    .limit(6);
 
   return (
     <div>
@@ -82,8 +71,8 @@ export default async function Home() {
               <input
                 type="text"
                 name="q"
-                placeholder="Search kurta, blouse, alterations…"
-                className="w-full rounded-full border border-line bg-paper px-5 py-3 text-sm text-ink placeholder:text-ink-soft/70"
+                placeholder="Search kurta, blouse…"
+                className="w-full rounded-full border border-line bg-paper px-5 py-3 text-sm text-ink placeholder:text-ink-soft"
               />
               <button
                 type="submit"
@@ -134,8 +123,13 @@ export default async function Home() {
         <p className="mt-1 text-sm text-ink-soft">
           Real prices, pulled straight from what we currently offer.
         </p>
+        {!services?.length ? (
+          <p className="mt-6 text-sm text-ink-soft">
+            Nothing to show yet — check back soon.
+          </p>
+        ) : (
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {(services ?? []).map((service) => (
+          {services.map((service) => (
             <Link
               key={service.id}
               href={`/book?service=${service.id}`}
@@ -162,14 +156,22 @@ export default async function Home() {
                     {service.name_hi}
                   </p>
                 )}
+                {/* Split across two lines — measured: "From ₹650 · Ready
+                    in 5 days" in font-mono overflows a 2-column mobile
+                    card's ~156px width at 360px viewport and wraps
+                    mid-phrase. */}
                 <p className="mt-auto font-mono text-sm text-ink-soft">
-                  From ₹{service.base_price} · Ready in {service.est_days} day
+                  From ₹{service.base_price}
+                </p>
+                <p className="font-mono text-xs text-ink-soft">
+                  Ready in {service.est_days} day
                   {service.est_days === 1 ? "" : "s"}
                 </p>
               </div>
             </Link>
           ))}
         </div>
+        )}
         <Link
           href="/services"
           className="mt-6 inline-block text-sm font-medium text-indigo underline"
@@ -219,30 +221,6 @@ export default async function Home() {
               <p className="mt-1 text-sm text-ink-soft">{point.description}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Honest numbers — no invented testimonials while we have none yet */}
-      <section className="border-y border-line-soft bg-paper">
-        <div className="mx-auto max-w-6xl px-4 py-14">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-            <div>
-              <p className="font-display text-3xl font-bold text-ink">
-                {activeTailors ?? "—"}
-              </p>
-              <p className="mt-1 text-sm text-ink-soft">Verified tailors on Stitchera</p>
-            </div>
-            <div>
-              <p className="font-display text-3xl font-bold text-ink">
-                {activeServices ?? "—"}
-              </p>
-              <p className="mt-1 text-sm text-ink-soft">Services offered</p>
-            </div>
-            <div>
-              <p className="font-display text-3xl font-bold text-ink">Kanpur</p>
-              <p className="mt-1 text-sm text-ink-soft">Proudly serving, one city at a time</p>
-            </div>
-          </div>
         </div>
       </section>
 

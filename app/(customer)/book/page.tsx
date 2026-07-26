@@ -235,7 +235,7 @@ export default async function BookPage({
             <li>
               Surge charge — ₹10, only for bookings placed between 8pm–6am
               {inSurgeWindow && (
-                <span className="ml-1 font-medium text-marigold">
+                <span className="ml-1 font-medium text-marigold-strong">
                   (applies right now)
                 </span>
               )}

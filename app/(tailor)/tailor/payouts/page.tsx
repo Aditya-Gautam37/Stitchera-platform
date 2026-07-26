@@ -64,7 +64,7 @@ export default async function TailorPayoutsPage() {
                   {formatINR(Number(p.net_payable))}
                 </p>
                 <p
-                  className={`text-xs ${p.paid_at ? "text-ink-soft" : "text-marigold"}`}
+                  className={`text-xs ${p.paid_at ? "text-ink-soft" : "text-marigold-strong"}`}
                 >
                   {p.paid_at
                     ? `Paid ${new Date(p.paid_at).toLocaleDateString()}`

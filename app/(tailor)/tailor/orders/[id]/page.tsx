@@ -80,7 +80,7 @@ export default async function TailorOrderDetailPage({
                     )}
                   </>
                 ) : (
-                  <p className="mt-1 text-sm text-marigold">
+                  <p className="mt-1 text-sm text-marigold-strong">
                     No measurements on file yet — check with pickup.
                   </p>
                 )}

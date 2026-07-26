@@ -16,7 +16,7 @@ export function StarRatingInput({
         {[1, 2, 3, 4, 5].map((n) => (
           <label
             key={n}
-            className="cursor-pointer text-2xl text-line-soft has-[:checked]:text-marigold has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus"
+            className="inline-flex cursor-pointer items-center justify-center p-2 text-2xl text-line has-[:checked]:text-marigold-strong has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus"
           >
             <input
               type="radio"

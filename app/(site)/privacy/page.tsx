@@ -6,7 +6,7 @@ import { CURRENT_CONSENT_VERSION } from "@/lib/consent";
 export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
-      <div className="rounded border border-marigold bg-paper p-4 text-sm font-medium text-marigold-ink">
+      <div className="rounded border border-marigold-strong bg-paper p-4 text-sm font-medium text-marigold-strong">
         DRAFT — pending legal review. This page describes what we collect
         and why in plain language; it is not final policy text.
       </div>
