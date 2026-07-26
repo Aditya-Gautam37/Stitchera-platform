@@ -215,8 +215,9 @@ export default async function BookPage({
 
       <aside className="order-first flex flex-col gap-4 lg:order-none">
         <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-          {/* TODO: replace with a real photo of the finished garment type
-              once we have per-service photography. */}
+          {/* TODO: real photography of the finished garment type — real
+              Indian tailoring, real fabric and machines, natural light,
+              no generic corporate stock. */}
           <Image
             src="/images/placeholders/finished-garment.svg"
             alt="Placeholder photo of a finished, stitched garment"

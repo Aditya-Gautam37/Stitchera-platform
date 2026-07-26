@@ -1,6 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { GarmentIcon, silhouetteFor } from "@/components/site/garment-icon";
 
 type ServiceRow = {
   id: string;
@@ -153,28 +153,34 @@ export default async function ServicesPage({
             <li key={service.id}>
               <Link
                 href={`/book?service=${service.id}`}
-                className="flex h-full flex-col gap-3 rounded-2xl border border-line bg-paper p-5 transition-colors hover:border-indigo"
+                className="flex h-full flex-col gap-3 overflow-hidden rounded-2xl border border-line bg-paper transition-colors hover:border-indigo"
               >
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-cotton">
-                  <GarmentIcon
-                    type={silhouetteFor(service.garment_type)}
-                    className="h-8 w-8 text-indigo"
+                <div className="relative aspect-[4/3] w-full">
+                  {/* TODO: real photography of this garment — real Indian
+                      tailoring, real fabric and machines, natural light,
+                      no generic corporate stock. */}
+                  <Image
+                    src="/images/placeholders/finished-garment.svg"
+                    alt={`Placeholder photo — ${service.name}`}
+                    fill
+                    unoptimized
+                    className="object-cover"
                   />
                 </div>
-                <div>
+                <div className="flex flex-1 flex-col gap-1 px-5 pb-5">
                   <p className="font-display font-bold text-ink">{service.name}</p>
                   {service.name_hi && (
                     <p className="font-devanagari text-sm text-ink-soft">
                       {service.name_hi}
                     </p>
                   )}
-                  <p className="mt-1 text-sm text-ink-soft">
-                    {service.est_days} day{service.est_days === 1 ? "" : "s"} turnaround
+                  <p className="mt-auto font-mono text-base font-medium text-ink">
+                    From ₹{service.base_price}
+                  </p>
+                  <p className="text-sm text-ink-soft">
+                    Ready in {service.est_days} day{service.est_days === 1 ? "" : "s"}
                   </p>
                 </div>
-                <p className="mt-auto font-mono text-lg font-medium text-ink">
-                  ₹{service.base_price}
-                </p>
               </Link>
             </li>
           ))}

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { GarmentIcon, silhouetteFor } from "@/components/site/garment-icon";
 
 const HOW_IT_WORKS = [
   {
@@ -9,15 +8,15 @@ const HOW_IT_WORKS = [
     description: "Pick a service and a pickup slot — takes under a minute.",
   },
   {
-    step: "We pick up",
+    step: "Pickup",
     description: "A Stitchera executive collects your garment and any notes from your door.",
   },
   {
-    step: "Tailor stitches",
+    step: "Stitch",
     description: "A verified local tailor makes or alters it, then it's quality checked.",
   },
   {
-    step: "Delivered",
+    step: "Deliver",
     description: "Back at your door, ready to wear.",
   },
 ] as const;
@@ -25,19 +24,19 @@ const HOW_IT_WORKS = [
 const TRUST_POINTS = [
   {
     title: "Verified tailors",
-    description: "Every tailor on Stitchera is vetted and rated before they take your order.",
+    description: "Every tailor on Stitchera is vetted before they take your order.",
   },
   {
-    title: "Checked before delivery",
-    description: "Every garment is quality checked after stitching, before it comes back to you.",
+    title: "Doorstep pickup",
+    description: "We collect and return at your door — no trip to a shop, no queue.",
   },
   {
-    title: "We come to you",
-    description: "Pickup and delivery at your door — no trip to a shop, no waiting in a queue.",
+    title: "Secure payments",
+    description: "Every payment is recorded and confirmed by our team, never informal.",
   },
   {
-    title: "Measurements, saved once",
-    description: "Save a measurement profile and every future order reuses it automatically.",
+    title: "Saved measurements",
+    description: "Save a measurement profile once and every future order reuses it.",
   },
 ] as const;
 
@@ -72,13 +71,29 @@ export default async function Home() {
               Doorstep tailoring, Kanpur
             </span>
             <h1 className="max-w-xl font-display text-4xl font-bold leading-tight text-ink sm:text-5xl">
-              Your tailor, without the trip to the shop.
+              Tailoring, without the tailor shop.
             </h1>
             <p className="max-w-lg text-lg text-ink-soft">
-              Book a pickup, we take it to a verified local tailor, and bring it
-              back stitched, altered, or repaired — no queue, no back-and-forth.
+              Book a service, we pick it up, a verified local tailor stitches
+              it, and we deliver it back to your door.
             </p>
-            <div className="flex flex-wrap gap-3 pt-2">
+
+            <form action="/services" className="flex max-w-md gap-2 pt-2">
+              <input
+                type="text"
+                name="q"
+                placeholder="Search kurta, blouse, alterations…"
+                className="w-full rounded-full border border-line bg-paper px-5 py-3 text-sm text-ink placeholder:text-ink-soft/70"
+              />
+              <button
+                type="submit"
+                className="shrink-0 rounded-full bg-indigo px-5 py-3 text-sm font-semibold text-paper hover:bg-indigo-strong"
+              >
+                Search
+              </button>
+            </form>
+
+            <div className="flex flex-wrap gap-3">
               <Link
                 href="/book"
                 className="rounded-full bg-indigo px-6 py-3 text-sm font-semibold text-paper hover:bg-indigo-strong"
@@ -95,8 +110,10 @@ export default async function Home() {
           </div>
 
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-            {/* TODO: replace with real Kanpur tailor photography — a
-                Stitchera pickup executive at a customer's doorstep. */}
+            {/* TODO: real photography — a Stitchera pickup executive at a
+                customer's doorstep in Kanpur. Brand rule: real Indian
+                tailoring, real fabric and machines, natural light, no
+                generic corporate stock. */}
             <Image
               src="/images/placeholders/hero-pickup.svg"
               alt="Placeholder photo of a Stitchera pickup executive collecting a garment at a customer's doorstep in Kanpur"
@@ -122,15 +139,21 @@ export default async function Home() {
             <Link
               key={service.id}
               href={`/book?service=${service.id}`}
-              className="group flex flex-col gap-3 rounded-2xl border border-line bg-paper p-5 transition-colors hover:border-indigo"
+              className="flex flex-col gap-3 overflow-hidden rounded-2xl border border-line bg-paper transition-colors hover:border-indigo"
             >
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-cotton">
-                <GarmentIcon
-                  type={silhouetteFor(service.garment_type)}
-                  className="h-9 w-9 text-indigo"
+              <div className="relative aspect-[4/3] w-full">
+                {/* TODO: real photography of this garment — real Indian
+                    tailoring, real fabric and machines, natural light, no
+                    generic corporate stock. */}
+                <Image
+                  src="/images/placeholders/finished-garment.svg"
+                  alt={`Placeholder photo — ${service.name}`}
+                  fill
+                  unoptimized
+                  className="object-cover"
                 />
               </div>
-              <div>
+              <div className="flex flex-1 flex-col gap-1 px-4 pb-4">
                 <p className="font-display text-base font-bold text-ink">
                   {service.name}
                 </p>
@@ -139,11 +162,11 @@ export default async function Home() {
                     {service.name_hi}
                   </p>
                 )}
+                <p className="mt-auto font-mono text-sm text-ink-soft">
+                  From ₹{service.base_price} · Ready in {service.est_days} day
+                  {service.est_days === 1 ? "" : "s"}
+                </p>
               </div>
-              <p className="mt-auto font-mono text-sm text-ink-soft">
-                From ₹{service.base_price} · {service.est_days} day
-                {service.est_days === 1 ? "" : "s"}
-              </p>
             </Link>
           ))}
         </div>

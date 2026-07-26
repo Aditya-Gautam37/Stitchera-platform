@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
+import { MobileBookCta } from "@/components/site/mobile-book-cta";
 
 export default async function CustomerLayout({
   children,
@@ -38,10 +39,11 @@ export default async function CustomerLayout({
   return (
     <div className="flex min-h-full flex-col">
       <SiteHeader />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8">
+      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 pb-24 sm:pb-8">
         {children}
       </main>
       <SiteFooter />
+      <MobileBookCta />
     </div>
   );
 }
