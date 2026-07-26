@@ -166,7 +166,7 @@ export default async function BodyTypePage({
               .
             </p>
           ) : (
-            <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
               {matches.map((service) => (
                 <li key={service.id} className={`flex flex-col gap-3 p-4 ${cardClass}`}>
                   <GarmentIcon

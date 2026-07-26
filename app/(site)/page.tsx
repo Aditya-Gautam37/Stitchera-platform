@@ -55,7 +55,7 @@ export default async function Home() {
     <div>
       {/* Hero */}
       <section className="border-b border-line-soft bg-paper">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:py-20 lg:grid-cols-2 lg:items-center">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:py-20 md:grid-cols-2 md:items-center">
           <div className="flex flex-col gap-6">
             <span className="w-fit rounded-full border border-line px-3 py-1 font-mono text-xs uppercase tracking-wide text-indigo">
               Doorstep tailoring, Kanpur
@@ -178,17 +178,17 @@ export default async function Home() {
           <h2 className="font-display text-2xl font-bold text-ink">
             How Stitchera works
           </h2>
-          <ol className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-4">
+          <ol className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
             {HOW_IT_WORKS.map((item, i) => (
               <li key={item.step} className="relative flex flex-col gap-2">
-                <div className="flex items-center gap-3 sm:flex-col sm:items-start sm:gap-3">
+                <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-3">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo font-mono text-sm font-medium text-paper">
                     {i + 1}
                   </span>
                   {i < HOW_IT_WORKS.length - 1 && (
                     <span
                       aria-hidden="true"
-                      className="hidden h-px flex-1 bg-line sm:mt-5 sm:block sm:h-px sm:w-full"
+                      className="hidden h-px flex-1 bg-line md:mt-5 md:block md:h-px md:w-full"
                     />
                   )}
                 </div>

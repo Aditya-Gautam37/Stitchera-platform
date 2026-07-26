@@ -7,7 +7,7 @@ export default function ServicesLoading() {
           <div key={i} className="h-8 w-20 rounded-full bg-line-soft" />
         ))}
       </div>
-      <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
           <li key={i} className="flex flex-col gap-3 rounded border border-line bg-paper p-4">
             <div className="h-10 w-10 rounded bg-line-soft" />

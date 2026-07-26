@@ -178,7 +178,7 @@ export default async function ServicesPage({
           No services matched — try a different search or category.
         </p>
       ) : (
-        <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {filtered.map((service) => (
             <li key={service.id}>
               <Link
