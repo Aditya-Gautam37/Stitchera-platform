@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { adminButtonClass, adminTableRowClass } from "@/components/ui/admin-styles";
 import { updateCity, upsertCityPrice } from "../actions";
 
 export default async function CityDetailPage({
@@ -117,10 +118,7 @@ export default async function CityDetailPage({
           />
           Active (serviceable now)
         </label>
-        <button
-          type="submit"
-          className="w-fit rounded bg-black px-4 py-2 text-sm text-white"
-        >
+        <button type="submit" className={`w-fit ${adminButtonClass("primary", "md")}`}>
           Save changes
         </button>
       </form>
@@ -142,7 +140,7 @@ export default async function CityDetailPage({
             {services?.map((s) => {
               const override = overrideMap.get(s.id);
               return (
-                <tr key={s.id}>
+                <tr key={s.id} className={adminTableRowClass}>
                   <td className="py-2">{s.name}</td>
                   <td className="py-2">₹{s.base_price}</td>
                   <td className="py-2">
@@ -161,10 +159,7 @@ export default async function CityDetailPage({
                         placeholder={String(s.base_price)}
                         className="w-28 rounded border px-2 py-1"
                       />
-                      <button
-                        type="submit"
-                        className="rounded border px-2 py-1 text-xs"
-                      >
+                      <button type="submit" className={adminButtonClass("secondary", "xs")}>
                         Save
                       </button>
                     </form>

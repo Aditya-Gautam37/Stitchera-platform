@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { AdminBadge } from "@/components/ui/admin-badge";
 
 export default async function AdminChatPage() {
   const profile = await requireStaff();
@@ -38,7 +39,7 @@ export default async function AdminChatPage() {
               <li key={t.id}>
                 <Link
                   href={`/admin/chat/${t.id}`}
-                  className="flex items-center justify-between py-3 hover:bg-zinc-50 dark:hover:bg-zinc-900"
+                  className="flex items-center justify-between py-3 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900"
                 >
                   <div>
                     <p className="text-sm font-medium">
@@ -48,15 +49,9 @@ export default async function AdminChatPage() {
                       {new Date(t.last_message_at).toLocaleString()}
                     </p>
                   </div>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-xs ${
-                      t.status === "open"
-                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-                        : "bg-zinc-100 text-zinc-500 dark:bg-zinc-900"
-                    }`}
-                  >
+                  <AdminBadge tone={t.status === "open" ? "positive" : "neutral"}>
                     {t.status}
-                  </span>
+                  </AdminBadge>
                 </Link>
               </li>
             );

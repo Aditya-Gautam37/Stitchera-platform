@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { adminButtonClass } from "@/components/ui/admin-styles";
 import { updateService } from "../actions";
 
 export default async function ServiceDetailPage({
@@ -111,10 +112,7 @@ export default async function ServiceDetailPage({
           />
           Active (visible to customers)
         </label>
-        <button
-          type="submit"
-          className="w-fit rounded bg-black px-4 py-2 text-sm text-white"
-        >
+        <button type="submit" className={`w-fit ${adminButtonClass("primary", "md")}`}>
           Save changes
         </button>
       </form>

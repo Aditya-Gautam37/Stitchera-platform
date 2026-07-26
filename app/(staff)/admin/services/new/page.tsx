@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/dal/staff";
+import { adminButtonClass } from "@/components/ui/admin-styles";
 import { createService } from "../actions";
 
 export default async function NewServicePage() {
@@ -90,10 +91,7 @@ export default async function NewServicePage() {
             className="rounded border px-3 py-2"
           />
         </label>
-        <button
-          type="submit"
-          className="w-fit rounded bg-black px-4 py-2 text-sm text-white"
-        >
+        <button type="submit" className={`w-fit ${adminButtonClass("primary", "md")}`}>
           Create service
         </button>
       </form>

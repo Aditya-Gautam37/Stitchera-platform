@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { AdminBadge } from "@/components/ui/admin-badge";
+import { adminButtonClass, adminTableRowClass } from "@/components/ui/admin-styles";
 
 export default async function ServicesAdminPage() {
   await requireAdmin();
@@ -14,10 +16,7 @@ export default async function ServicesAdminPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Service catalog</h1>
-        <Link
-          href="/admin/services/new"
-          className="rounded bg-black px-3 py-1.5 text-sm text-white"
-        >
+        <Link href="/admin/services/new" className={adminButtonClass("primary", "sm")}>
           Add service
         </Link>
       </div>
@@ -34,7 +33,7 @@ export default async function ServicesAdminPage() {
         </thead>
         <tbody className="divide-y">
           {services?.map((s) => (
-            <tr key={s.id}>
+            <tr key={s.id} className={adminTableRowClass}>
               <td className="py-2">
                 <Link
                   href={`/admin/services/${s.id}`}
@@ -48,7 +47,11 @@ export default async function ServicesAdminPage() {
               </td>
               <td className="py-2">₹{s.base_price}</td>
               <td className="py-2">{s.est_days}</td>
-              <td className="py-2">{s.is_active ? "Active" : "Inactive"}</td>
+              <td className="py-2">
+                <AdminBadge tone={s.is_active ? "positive" : "neutral"}>
+                  {s.is_active ? "Active" : "Inactive"}
+                </AdminBadge>
+              </td>
             </tr>
           ))}
         </tbody>

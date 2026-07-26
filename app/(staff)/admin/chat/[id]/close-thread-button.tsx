@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { closeChatThread } from "@/lib/actions/chat";
+import { adminButtonClass } from "@/components/ui/admin-styles";
 
 export function CloseThreadButton({ threadId }: { threadId: string }) {
   const router = useRouter();
@@ -18,7 +19,7 @@ export function CloseThreadButton({ threadId }: { threadId: string }) {
           router.refresh();
         });
       }}
-      className="rounded border px-3 py-1.5 text-sm hover:bg-zinc-50 disabled:opacity-50 dark:hover:bg-zinc-900"
+      className={adminButtonClass("secondary", "sm")}
     >
       {isPending ? "Closing..." : "Close conversation"}
     </button>

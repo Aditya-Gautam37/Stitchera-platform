@@ -38,7 +38,7 @@ export default async function StaffLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded px-2 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+                className="rounded px-2 py-1.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-900"
               >
                 {item.label}
               </Link>

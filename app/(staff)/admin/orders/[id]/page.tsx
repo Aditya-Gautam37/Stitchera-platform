@@ -14,6 +14,9 @@ import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
 import { formatMeasurementSummary } from "@/lib/measurements";
 import { SubmitButton } from "@/components/submit-button";
+import { AdminBadge } from "@/components/ui/admin-badge";
+import { adminButtonClass } from "@/components/ui/admin-styles";
+import { ADMIN_PAYMENT_STATUS_TONE } from "@/lib/admin-status-tone";
 import {
   updateOrderStatus,
   assignPickupAgent,
@@ -178,11 +181,10 @@ export default async function AdminOrderDetailPage({
 
           <div>
             <h2 className="text-lg font-medium">Payments</h2>
-            <div className="mt-1 flex gap-4 text-sm">
-              <span className="text-zinc-500">
-                {PAYMENT_STATUS_LABELS[order.payment_status] ??
-                  order.payment_status}
-              </span>
+            <div className="mt-1 flex items-center gap-4 text-sm">
+              <AdminBadge tone={ADMIN_PAYMENT_STATUS_TONE[order.payment_status] ?? "neutral"}>
+                {PAYMENT_STATUS_LABELS[order.payment_status] ?? order.payment_status}
+              </AdminBadge>
               <span>
                 Paid <span className="font-medium">₹{paid.toFixed(2)}</span>
               </span>
@@ -259,10 +261,7 @@ export default async function AdminOrderDetailPage({
                       className="rounded border px-2 py-1.5"
                     />
                   </label>
-                  <SubmitButton
-                    pendingText="Recording..."
-                    className="rounded bg-black px-3 py-1.5 text-sm text-white disabled:opacity-50"
-                  >
+                  <SubmitButton pendingText="Recording..." className={adminButtonClass("primary", "sm")}>
                     Record payment
                   </SubmitButton>
                 </div>
@@ -307,10 +306,7 @@ export default async function AdminOrderDetailPage({
                 </option>
               ))}
             </select>
-            <button
-              type="submit"
-              className="w-fit rounded bg-black px-3 py-1.5 text-sm text-white"
-            >
+            <button type="submit" className={`w-fit ${adminButtonClass("primary", "sm")}`}>
               Update status
             </button>
           </form>
@@ -330,10 +326,7 @@ export default async function AdminOrderDetailPage({
                 </option>
               ))}
             </select>
-            <button
-              type="submit"
-              className="w-fit rounded border px-3 py-1.5 text-sm"
-            >
+            <button type="submit" className={`w-fit ${adminButtonClass("secondary", "sm")}`}>
               Assign
             </button>
           </form>
@@ -353,10 +346,7 @@ export default async function AdminOrderDetailPage({
                 </option>
               ))}
             </select>
-            <button
-              type="submit"
-              className="w-fit rounded border px-3 py-1.5 text-sm"
-            >
+            <button type="submit" className={`w-fit ${adminButtonClass("secondary", "sm")}`}>
               Assign
             </button>
           </form>
@@ -370,10 +360,7 @@ export default async function AdminOrderDetailPage({
               defaultValue={order.promised_date ?? ""}
               className="rounded border px-2 py-1.5 text-sm"
             />
-            <button
-              type="submit"
-              className="w-fit rounded border px-3 py-1.5 text-sm"
-            >
+            <button type="submit" className={`w-fit ${adminButtonClass("secondary", "sm")}`}>
               Save
             </button>
           </form>

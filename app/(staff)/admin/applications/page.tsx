@@ -1,6 +1,9 @@
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
 import { SubmitButton } from "@/components/submit-button";
+import { AdminBadge } from "@/components/ui/admin-badge";
+import { adminButtonClass, adminCardClass, adminTableRowClass } from "@/components/ui/admin-styles";
+import { ADMIN_APPLICATION_STATUS_TONE } from "@/lib/admin-status-tone";
 import { approveApplication, rejectApplication } from "./actions";
 
 export default async function ApplicationsPage() {
@@ -31,7 +34,7 @@ export default async function ApplicationsPage() {
         ) : (
           <ul className="mt-3 flex flex-col gap-4">
             {pending.map((a) => (
-              <li key={a.id} className="rounded border p-4">
+              <li key={a.id} className={`p-4 ${adminCardClass}`}>
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="font-medium">
@@ -58,7 +61,7 @@ export default async function ApplicationsPage() {
                       <input type="hidden" name="application_id" value={a.id} />
                       <SubmitButton
                         pendingText="Approving..."
-                        className="w-full rounded bg-black px-3 py-1.5 text-sm text-white disabled:opacity-50"
+                        className={`w-full ${adminButtonClass("primary", "sm")}`}
                       >
                         Approve
                       </SubmitButton>
@@ -73,7 +76,7 @@ export default async function ApplicationsPage() {
                       />
                       <SubmitButton
                         pendingText="Rejecting..."
-                        className="w-full rounded border px-3 py-1.5 text-sm text-red-600 disabled:opacity-50"
+                        className={`w-full ${adminButtonClass("danger", "sm")}`}
                       >
                         Reject
                       </SubmitButton>
@@ -102,12 +105,16 @@ export default async function ApplicationsPage() {
             </thead>
             <tbody className="divide-y">
               {decided.map((a) => (
-                <tr key={a.id}>
+                <tr key={a.id} className={adminTableRowClass}>
                   <td className="py-2">{a.full_name}</td>
                   <td className="py-2">
                     {a.applicant_type === "tailor" ? "Tailor" : "Delivery partner"}
                   </td>
-                  <td className="py-2 capitalize">{a.status}</td>
+                  <td className="py-2">
+                    <AdminBadge tone={ADMIN_APPLICATION_STATUS_TONE[a.status] ?? "neutral"} className="capitalize">
+                      {a.status}
+                    </AdminBadge>
+                  </td>
                   <td className="py-2 text-zinc-500">{a.rejection_reason || "—"}</td>
                 </tr>
               ))}

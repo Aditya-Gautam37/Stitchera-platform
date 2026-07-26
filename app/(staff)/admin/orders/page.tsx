@@ -7,6 +7,9 @@ import {
 } from "@/lib/constants";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { AdminBadge } from "@/components/ui/admin-badge";
+import { adminButtonClass, adminTableRowClass } from "@/components/ui/admin-styles";
+import { ADMIN_ORDER_STATUS_TONE, ADMIN_PAYMENT_STATUS_TONE } from "@/lib/admin-status-tone";
 
 const PAGE_SIZE = 50;
 
@@ -76,7 +79,7 @@ export default async function OrdersPage({
               Assigned to me
             </label>
           )}
-          <button type="submit" className="rounded border px-3 py-1">
+          <button type="submit" className={adminButtonClass("secondary", "sm")}>
             Filter
           </button>
         </form>
@@ -95,7 +98,7 @@ export default async function OrdersPage({
         </thead>
         <tbody className="divide-y">
           {orders?.map((o) => (
-            <tr key={o.id}>
+            <tr key={o.id} className={adminTableRowClass}>
               <td className="py-2">
                 <Link
                   href={`/admin/orders/${o.id}`}
@@ -105,14 +108,14 @@ export default async function OrdersPage({
                 </Link>
               </td>
               <td className="py-2">
-                {ORDER_STATUS_LABELS[o.status as OrderStatus]}
+                <AdminBadge tone={ADMIN_ORDER_STATUS_TONE[o.status as OrderStatus]}>
+                  {ORDER_STATUS_LABELS[o.status as OrderStatus]}
+                </AdminBadge>
               </td>
-              <td
-                className={
-                  o.payment_status === "paid" ? "py-2" : "py-2 text-amber-600"
-                }
-              >
-                {PAYMENT_STATUS_LABELS[o.payment_status] ?? o.payment_status}
+              <td className="py-2">
+                <AdminBadge tone={ADMIN_PAYMENT_STATUS_TONE[o.payment_status] ?? "neutral"}>
+                  {PAYMENT_STATUS_LABELS[o.payment_status] ?? o.payment_status}
+                </AdminBadge>
               </td>
               <td className="py-2">{o.contact_phone}</td>
               <td className="py-2">₹{o.grand_total}</td>
@@ -134,12 +137,12 @@ export default async function OrdersPage({
           </span>
           <div className="flex gap-2">
             {page > 1 && (
-              <Link href={pageHref(page - 1)} className="rounded border px-3 py-1">
+              <Link href={pageHref(page - 1)} className={adminButtonClass("secondary", "sm")}>
                 Previous
               </Link>
             )}
             {page < totalPages && (
-              <Link href={pageHref(page + 1)} className="rounded border px-3 py-1">
+              <Link href={pageHref(page + 1)} className={adminButtonClass("secondary", "sm")}>
                 Next
               </Link>
             )}

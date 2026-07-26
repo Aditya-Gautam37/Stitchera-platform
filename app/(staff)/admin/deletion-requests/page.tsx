@@ -1,6 +1,9 @@
 import { requireAdmin } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
 import { SubmitButton } from "@/components/submit-button";
+import { AdminBadge } from "@/components/ui/admin-badge";
+import { adminButtonClass, adminCardClass, adminTableRowClass } from "@/components/ui/admin-styles";
+import { ADMIN_DELETION_STATUS_TONE } from "@/lib/admin-status-tone";
 import { dismissDeletionRequest, markDeletionActioned } from "./actions";
 
 type RequestRow = {
@@ -35,7 +38,7 @@ export default async function DeletionRequestsPage() {
         ) : (
           <ul className="mt-3 flex flex-col gap-4">
             {pending.map((r) => (
-              <li key={r.id} className="rounded border p-4">
+              <li key={r.id} className={`p-4 ${adminCardClass}`}>
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="font-medium">
@@ -56,7 +59,7 @@ export default async function DeletionRequestsPage() {
                       <input type="hidden" name="request_id" value={r.id} />
                       <SubmitButton
                         pendingText="Saving..."
-                        className="w-full rounded bg-black px-3 py-1.5 text-sm text-white disabled:opacity-50"
+                        className={`w-full ${adminButtonClass("primary", "sm")}`}
                       >
                         Mark actioned
                       </SubmitButton>
@@ -65,7 +68,7 @@ export default async function DeletionRequestsPage() {
                       <input type="hidden" name="request_id" value={r.id} />
                       <SubmitButton
                         pendingText="Saving..."
-                        className="w-full rounded border px-3 py-1.5 text-sm disabled:opacity-50"
+                        className={`w-full ${adminButtonClass("secondary", "sm")}`}
                       >
                         Dismiss
                       </SubmitButton>
@@ -93,11 +96,15 @@ export default async function DeletionRequestsPage() {
             </thead>
             <tbody className="divide-y">
               {decided.map((r) => (
-                <tr key={r.id}>
+                <tr key={r.id} className={adminTableRowClass}>
                   <td className="py-2">
                     {r.profile?.full_name || r.profile?.phone || "Customer"}
                   </td>
-                  <td className="py-2 capitalize">{r.status}</td>
+                  <td className="py-2">
+                    <AdminBadge tone={ADMIN_DELETION_STATUS_TONE[r.status] ?? "neutral"} className="capitalize">
+                      {r.status}
+                    </AdminBadge>
+                  </td>
                   <td className="py-2 text-zinc-500">
                     {new Date(r.created_at).toLocaleDateString()}
                   </td>

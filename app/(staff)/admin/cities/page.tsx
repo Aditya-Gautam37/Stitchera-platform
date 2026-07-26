@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { AdminBadge } from "@/components/ui/admin-badge";
+import { adminButtonClass, adminTableRowClass } from "@/components/ui/admin-styles";
 
 export default async function CitiesPage() {
   await requireAdmin();
@@ -14,10 +16,7 @@ export default async function CitiesPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Cities</h1>
-        <Link
-          href="/admin/cities/new"
-          className="rounded bg-black px-3 py-1.5 text-sm text-white"
-        >
+        <Link href="/admin/cities/new" className={adminButtonClass("primary", "sm")}>
           Add city
         </Link>
       </div>
@@ -34,7 +33,7 @@ export default async function CitiesPage() {
         </thead>
         <tbody className="divide-y">
           {cities?.map((c) => (
-            <tr key={c.id}>
+            <tr key={c.id} className={adminTableRowClass}>
               <td className="py-2">
                 <Link
                   href={`/admin/cities/${c.id}`}
@@ -44,7 +43,11 @@ export default async function CitiesPage() {
                 </Link>
               </td>
               <td className="py-2">{c.state}</td>
-              <td className="py-2">{c.is_active ? "Active" : "Inactive"}</td>
+              <td className="py-2">
+                <AdminBadge tone={c.is_active ? "positive" : "neutral"}>
+                  {c.is_active ? "Active" : "Inactive"}
+                </AdminBadge>
+              </td>
               <td className="py-2">₹{c.visit_charge}</td>
               <td className="py-2">₹{c.delivery_charge}</td>
             </tr>

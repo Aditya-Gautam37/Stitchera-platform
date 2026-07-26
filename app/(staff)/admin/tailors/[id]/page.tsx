@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { adminButtonClass, adminCardClass } from "@/components/ui/admin-styles";
 import { linkTailorProfile, updateTailor } from "../actions";
 
 export default async function TailorDetailPage({
@@ -37,7 +38,7 @@ export default async function TailorDetailPage({
         </p>
       </div>
 
-      <div className="max-w-md rounded border p-4">
+      <div className={`max-w-md p-4 ${adminCardClass}`}>
         <h2 className="text-sm font-medium">App login</h2>
         {tailor.profile_id ? (
           <p className="mt-1 text-sm text-zinc-500">
@@ -65,10 +66,7 @@ export default async function TailorDetailPage({
                   className="rounded border px-3 py-2"
                 />
               </label>
-              <button
-                type="submit"
-                className="rounded bg-black px-4 py-2 text-sm text-white"
-              >
+              <button type="submit" className={adminButtonClass("primary", "md")}>
                 Link
               </button>
             </form>
@@ -160,10 +158,7 @@ export default async function TailorDetailPage({
             <option value="inactive">Inactive</option>
           </select>
         </label>
-        <button
-          type="submit"
-          className="w-fit rounded bg-black px-4 py-2 text-sm text-white"
-        >
+        <button type="submit" className={`w-fit ${adminButtonClass("primary", "md")}`}>
           Save changes
         </button>
       </form>

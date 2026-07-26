@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { adminButtonClass } from "@/components/ui/admin-styles";
 import { createTailor } from "../actions";
 
 export default async function NewTailorPage() {
@@ -98,10 +99,7 @@ export default async function NewTailorPage() {
             className="rounded border px-3 py-2"
           />
         </label>
-        <button
-          type="submit"
-          className="w-fit rounded bg-black px-4 py-2 text-sm text-white"
-        >
+        <button type="submit" className={`w-fit ${adminButtonClass("primary", "md")}`}>
           Create tailor
         </button>
       </form>

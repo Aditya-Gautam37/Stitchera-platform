@@ -6,6 +6,7 @@ import { formatMeasurementSummary } from "@/lib/measurements";
 import { SUBSCRIPTION_PLANS } from "@/lib/constants";
 import { MeasurementFields } from "@/components/measurement-fields";
 import { SubmitButton } from "@/components/submit-button";
+import { adminButtonClass } from "@/components/ui/admin-styles";
 import { recordCustomerMeasurement } from "./actions";
 import { grantSubscription } from "./subscription-actions";
 
@@ -163,7 +164,7 @@ export default async function CustomerDetailPage({
             <MeasurementFields />
             <SubmitButton
               pendingText="Saving..."
-              className="w-fit rounded bg-black px-4 py-2 text-sm text-white disabled:opacity-50"
+              className={`w-fit ${adminButtonClass("primary", "md")}`}
             >
               Save measurements
             </SubmitButton>
@@ -198,10 +199,7 @@ export default async function CustomerDetailPage({
                 </option>
               ))}
             </select>
-            <SubmitButton
-              pendingText="Granting..."
-              className="rounded border px-3 py-1.5 text-sm disabled:opacity-50"
-            >
+            <SubmitButton pendingText="Granting..." className={adminButtonClass("secondary", "sm")}>
               Grant subscription
             </SubmitButton>
           </form>

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { AdminBadge } from "@/components/ui/admin-badge";
+import { adminButtonClass, adminTableRowClass } from "@/components/ui/admin-styles";
 
 export default async function CustomersPage({
   searchParams,
@@ -83,7 +85,7 @@ export default async function CustomersPage({
             placeholder="Search name or phone"
             className="rounded border px-3 py-1.5 text-sm"
           />
-          <button type="submit" className="rounded border px-3 py-1.5 text-sm">
+          <button type="submit" className={adminButtonClass("secondary", "sm")}>
             Search
           </button>
         </form>
@@ -100,7 +102,7 @@ export default async function CustomersPage({
         </thead>
         <tbody className="divide-y">
           {customers.map((c) => (
-            <tr key={c.id}>
+            <tr key={c.id} className={adminTableRowClass}>
               <td className="py-2">
                 <Link
                   href={`/admin/customers/${c.id}`}
@@ -110,7 +112,11 @@ export default async function CustomersPage({
                 </Link>
               </td>
               <td className="py-2">{c.phone}</td>
-              <td className="py-2">{c.is_active ? "Active" : "Inactive"}</td>
+              <td className="py-2">
+                <AdminBadge tone={c.is_active ? "positive" : "neutral"}>
+                  {c.is_active ? "Active" : "Inactive"}
+                </AdminBadge>
+              </td>
               <td className="py-2 text-zinc-500">
                 {new Date(c.created_at).toLocaleDateString()}
               </td>

@@ -1,6 +1,7 @@
 import { ORDER_STATUSES, ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/constants";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { adminCardClass } from "@/components/ui/admin-styles";
 
 type OrderStatRow = {
   status: OrderStatus;
@@ -117,7 +118,7 @@ function StatTile({
   hint?: string;
 }) {
   return (
-    <div className="rounded border p-4">
+    <div className={`p-4 ${adminCardClass}`}>
       <p className="text-sm text-zinc-500">{label}</p>
       <p className="mt-1 text-2xl font-semibold">{value}</p>
       {hint && <p className="mt-1 text-xs text-zinc-500">{hint}</p>}

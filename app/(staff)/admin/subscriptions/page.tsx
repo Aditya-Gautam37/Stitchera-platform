@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { adminButtonClass, adminCardClass } from "@/components/ui/admin-styles";
 import { updatePlan } from "./actions";
 
 export default async function AdminSubscriptionsPage() {
@@ -23,7 +24,7 @@ export default async function AdminSubscriptionsPage() {
           <form
             key={plan.key}
             action={updatePlan}
-            className="flex flex-col gap-3 rounded border p-4"
+            className={`flex flex-col gap-3 p-4 ${adminCardClass}`}
           >
             <input type="hidden" name="key" value={plan.key} />
             <p className="font-medium capitalize">{plan.key}</p>
@@ -78,10 +79,7 @@ export default async function AdminSubscriptionsPage() {
               />
               Active (visible to customers)
             </label>
-            <button
-              type="submit"
-              className="w-fit rounded bg-black px-3 py-1.5 text-sm text-white"
-            >
+            <button type="submit" className={`w-fit ${adminButtonClass("primary", "sm")}`}>
               Save
             </button>
           </form>

@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/dal/staff";
+import { adminButtonClass } from "@/components/ui/admin-styles";
 import { createCity } from "../actions";
 
 export default async function NewCityPage() {
@@ -79,10 +80,7 @@ export default async function NewCityPage() {
           <input type="checkbox" name="is_active" />
           Active (serviceable now)
         </label>
-        <button
-          type="submit"
-          className="w-fit rounded bg-black px-4 py-2 text-sm text-white"
-        >
+        <button type="submit" className={`w-fit ${adminButtonClass("primary", "md")}`}>
           Create city
         </button>
       </form>

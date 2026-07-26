@@ -2,6 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireStaff } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { AdminBadge } from "@/components/ui/admin-badge";
+import { adminButtonClass, adminTableRowClass } from "@/components/ui/admin-styles";
+import { ADMIN_TAILOR_STATUS_TONE } from "@/lib/admin-status-tone";
 
 export default async function TailorsPage() {
   const profile = await requireStaff();
@@ -23,10 +26,7 @@ export default async function TailorsPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Tailors</h1>
-        <Link
-          href="/admin/tailors/new"
-          className="rounded bg-black px-3 py-1.5 text-sm text-white"
-        >
+        <Link href="/admin/tailors/new" className={adminButtonClass("primary", "sm")}>
           Add tailor
         </Link>
       </div>
@@ -44,7 +44,7 @@ export default async function TailorsPage() {
         </thead>
         <tbody className="divide-y">
           {tailors?.map((t) => (
-            <tr key={t.id}>
+            <tr key={t.id} className={adminTableRowClass}>
               <td className="py-2">
                 <Link
                   href={`/admin/tailors/${t.id}`}
@@ -55,7 +55,11 @@ export default async function TailorsPage() {
               </td>
               <td className="py-2">{t.shop_name || "—"}</td>
               <td className="py-2">{t.phone}</td>
-              <td className="py-2">{t.status.replace(/_/g, " ")}</td>
+              <td className="py-2">
+                <AdminBadge tone={ADMIN_TAILOR_STATUS_TONE[t.status] ?? "neutral"}>
+                  {t.status.replace(/_/g, " ")}
+                </AdminBadge>
+              </td>
               <td className="py-2">{t.rating ?? "—"}</td>
               <td className="py-2">{t.total_orders}</td>
             </tr>

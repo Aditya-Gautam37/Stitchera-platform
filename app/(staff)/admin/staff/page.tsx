@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/dal/staff";
 import { createClient } from "@/lib/supabase/server";
+import { adminButtonClass, adminTableRowClass } from "@/components/ui/admin-styles";
 import { updateStaffRole, promoteByPhone } from "./actions";
 
 export default async function StaffPage() {
@@ -56,10 +57,7 @@ export default async function StaffPage() {
               ))}
             </select>
           </label>
-          <button
-            type="submit"
-            className="rounded bg-black px-4 py-2 text-sm text-white"
-          >
+          <button type="submit" className={adminButtonClass("primary", "md")}>
             Promote
           </button>
         </form>
@@ -81,7 +79,7 @@ export default async function StaffPage() {
           </thead>
           <tbody className="divide-y">
             {staff?.map((s) => (
-              <tr key={s.id}>
+              <tr key={s.id} className={adminTableRowClass}>
                 <td className="py-2 align-top">{s.full_name || "—"}</td>
                 <td className="py-2 align-top">{s.phone}</td>
                 <td className="py-2">
@@ -120,10 +118,7 @@ export default async function StaffPage() {
                       />
                       Active
                     </label>
-                    <button
-                      type="submit"
-                      className="rounded border px-2 py-1 text-xs"
-                    >
+                    <button type="submit" className={adminButtonClass("secondary", "xs")}>
                       Save
                     </button>
                   </form>
