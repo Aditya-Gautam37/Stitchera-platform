@@ -1,11 +1,30 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { isValidPhone, normalizePhone } from "@/lib/phone";
+import { authInputClass, authPrimaryButtonClass } from "@/components/auth/styles";
 
 const RESEND_COOLDOWN_SECONDS = 30;
+
+type AuthErrorKind = "invalid_credentials" | "unconfirmed" | "generic";
+type AuthError = { kind: AuthErrorKind; message: string };
+
+function classifyAuthError(message: string): AuthErrorKind {
+  const m = message.toLowerCase();
+  if (m.includes("invalid login credentials")) return "invalid_credentials";
+  if (m.includes("email not confirmed")) return "unconfirmed";
+  return "generic";
+}
+
+const tabClass = (active: boolean) =>
+  `flex-1 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+    active
+      ? "border-indigo bg-indigo text-paper"
+      : "border-line text-ink-soft hover:border-indigo"
+  }`;
 
 export function LoginForm({ next }: { next: string }) {
   const supabase = createClient();
@@ -22,9 +41,11 @@ export function LoginForm({ next }: { next: string }) {
   // Email/password state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [emailMode, setEmailMode] = useState<"login" | "signup">("login");
+  const [emailMode, setEmailMode] = useState<"login" | "signup" | "forgot">("login");
+  const [resetSent, setResetSent] = useState(false);
 
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AuthError | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -33,13 +54,20 @@ export function LoginForm({ next }: { next: string }) {
     return () => clearInterval(timer);
   }, [cooldown]);
 
+  function switchEmailMode(mode: "login" | "signup" | "forgot") {
+    setEmailMode(mode);
+    setError(null);
+    setNotice(null);
+    setResetSent(false);
+  }
+
   async function sendOtp(e: FormEvent) {
     e.preventDefault();
     setError(null);
 
     const normalized = normalizePhone(phone);
     if (!isValidPhone(normalized)) {
-      setError("Please enter a valid phone number, e.g. 98765 43210");
+      setError({ kind: "generic", message: "Please enter a valid phone number, e.g. 98765 43210" });
       return;
     }
 
@@ -47,7 +75,7 @@ export function LoginForm({ next }: { next: string }) {
     const { error } = await supabase.auth.signInWithOtp({ phone: normalized });
     setLoading(false);
     if (error) {
-      setError(error.message);
+      setError({ kind: classifyAuthError(error.message), message: error.message });
       return;
     }
     setPhone(normalized);
@@ -62,7 +90,7 @@ export function LoginForm({ next }: { next: string }) {
     const { error } = await supabase.auth.signInWithOtp({ phone });
     setLoading(false);
     if (error) {
-      setError(error.message);
+      setError({ kind: classifyAuthError(error.message), message: error.message });
       return;
     }
     setCooldown(RESEND_COOLDOWN_SECONDS);
@@ -79,7 +107,7 @@ export function LoginForm({ next }: { next: string }) {
     });
     setLoading(false);
     if (error) {
-      setError(error.message);
+      setError({ kind: classifyAuthError(error.message), message: error.message });
       return;
     }
     router.replace(next);
@@ -89,20 +117,26 @@ export function LoginForm({ next }: { next: string }) {
   async function submitEmail(e: FormEvent) {
     e.preventDefault();
     setError(null);
+    setNotice(null);
     setLoading(true);
 
+    const trimmedEmail = email.trim();
+
     if (emailMode === "signup") {
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({
+        email: trimmedEmail,
+        password,
+      });
       setLoading(false);
       if (error) {
-        setError(error.message);
+        setError({ kind: classifyAuthError(error.message), message: error.message });
         return;
       }
       if (!data.session) {
-        setError(
-          "Account created — check your email to confirm it, then log in. (If you don't want to wait on email delivery, turn off \"Confirm email\" under Supabase Dashboard → Authentication → Providers → Email.)"
+        setNotice(
+          `Account created — check ${trimmedEmail} for a confirmation link, then log in.`
         );
-        setEmailMode("login");
+        switchEmailMode("login");
         return;
       }
       router.replace(next);
@@ -110,165 +144,269 @@ export function LoginForm({ next }: { next: string }) {
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: trimmedEmail,
+      password,
+    });
     setLoading(false);
     if (error) {
-      setError(error.message);
+      setError({ kind: classifyAuthError(error.message), message: error.message });
       return;
     }
     router.replace(next);
     router.refresh();
   }
 
+  async function submitForgotPassword(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setLoading(false);
+    if (error) {
+      setError({ kind: classifyAuthError(error.message), message: error.message });
+      return;
+    }
+    setResetSent(true);
+  }
+
   return (
-    <main className="mx-auto flex max-w-sm flex-col gap-6 p-8">
-      <h1 className="text-2xl font-semibold">Log in</h1>
+    <main className="flex flex-1 items-center justify-center px-4 py-12">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 text-center">
+          <Link href="/" className="font-display text-2xl font-bold text-ink">
+            Stitchera
+          </Link>
+          <p className="mt-1 text-sm text-ink-soft">Doorstep tailoring, sorted.</p>
+        </div>
 
-      <div className="flex gap-2 text-sm">
-        <button
-          type="button"
-          onClick={() => {
-            setMethod("email");
-            setError(null);
-          }}
-          className={`rounded border px-3 py-1.5 ${
-            method === "email" ? "bg-black text-white" : "text-zinc-600"
-          }`}
-        >
-          Email
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setMethod("phone");
-            setError(null);
-          }}
-          className={`rounded border px-3 py-1.5 ${
-            method === "phone" ? "bg-black text-white" : "text-zinc-600"
-          }`}
-        >
-          Phone
-        </button>
-      </div>
-
-      {method === "email" ? (
-        <form onSubmit={submitEmail} className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1 text-sm">
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="rounded border px-3 py-2"
-            />
-          </label>
-          <label className="flex flex-col gap-1 text-sm">
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="rounded border px-3 py-2"
-            />
-          </label>
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
-          >
-            {loading
-              ? "Please wait..."
-              : emailMode === "signup"
-                ? "Sign up"
+        <div className="rounded-2xl border border-line bg-paper p-7">
+          <h1 className="font-display text-xl font-bold text-ink">
+            {method === "email" && emailMode === "signup"
+              ? "Create your account"
+              : method === "email" && emailMode === "forgot"
+                ? "Reset your password"
                 : "Log in"}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setEmailMode(emailMode === "signup" ? "login" : "signup");
-              setError(null);
-            }}
-            className="text-sm text-zinc-500 underline"
-          >
-            {emailMode === "signup"
-              ? "Already have an account? Log in"
-              : "New here? Create an account"}
-          </button>
-        </form>
-      ) : stage === "phone" ? (
-        <form onSubmit={sendOtp} className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1 text-sm">
-            Phone number
-            <input
-              type="tel"
-              placeholder="+91XXXXXXXXXX"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-              className="rounded border px-3 py-2"
-            />
-          </label>
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
-          >
-            {loading ? "Sending..." : "Send OTP"}
-          </button>
-        </form>
-      ) : (
-        <form onSubmit={verifyOtp} className="flex flex-col gap-4">
-          <p className="text-sm text-zinc-600">
-            Enter the code sent to {phone}
-          </p>
-          <input
-            type="text"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            required
-            className="rounded border px-3 py-2"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
-          >
-            {loading ? "Verifying..." : "Verify"}
-          </button>
-          <div className="flex items-center justify-between text-sm">
-            <button
-              type="button"
-              onClick={() => {
-                setStage("phone");
-                setOtp("");
-                setError(null);
-              }}
-              className="text-zinc-500 underline"
-            >
-              Change number
-            </button>
-            <button
-              type="button"
-              onClick={resendOtp}
-              disabled={cooldown > 0 || loading}
-              className="text-zinc-500 underline disabled:opacity-50"
-            >
-              {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
-            </button>
-          </div>
-        </form>
-      )}
+          </h1>
 
-      {error && (
-        <p role="alert" className="text-sm text-red-600">
-          {error}
-        </p>
-      )}
+          {!(method === "email" && emailMode === "forgot") && (
+            <div className="mt-5 flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setMethod("email");
+                  setError(null);
+                  setNotice(null);
+                }}
+                className={tabClass(method === "email")}
+              >
+                Email
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMethod("phone");
+                  setError(null);
+                  setNotice(null);
+                }}
+                className={tabClass(method === "phone")}
+              >
+                Phone
+              </button>
+            </div>
+          )}
+
+          <div className="mt-6">
+            {method === "email" && emailMode === "forgot" ? (
+              resetSent ? (
+                <div className="flex flex-col gap-4">
+                  <p className="text-sm text-ink-soft">
+                    If an account exists for <strong className="text-ink">{email}</strong>,
+                    a reset link is on its way — check your inbox.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => switchEmailMode("login")}
+                    className="text-sm font-medium text-indigo underline"
+                  >
+                    Back to log in
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={submitForgotPassword} className="flex flex-col gap-4">
+                  <p className="text-sm text-ink-soft">
+                    Enter your email and we&apos;ll send you a link to set a new password.
+                  </p>
+                  <label className="flex flex-col gap-1 text-sm text-ink">
+                    Email
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className={authInputClass}
+                    />
+                  </label>
+                  <button type="submit" disabled={loading} className={authPrimaryButtonClass}>
+                    {loading ? "Sending..." : "Send reset link"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchEmailMode("login")}
+                    className="text-sm text-ink-soft underline"
+                  >
+                    Back to log in
+                  </button>
+                </form>
+              )
+            ) : method === "email" ? (
+              <form onSubmit={submitEmail} className="flex flex-col gap-4">
+                <label className="flex flex-col gap-1 text-sm text-ink">
+                  Email
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className={authInputClass}
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-sm text-ink">
+                  <span className="flex items-center justify-between">
+                    Password
+                    {emailMode === "login" && (
+                      <button
+                        type="button"
+                        onClick={() => switchEmailMode("forgot")}
+                        className="text-xs font-normal text-indigo underline"
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </span>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    className={authInputClass}
+                  />
+                </label>
+                <button type="submit" disabled={loading} className={authPrimaryButtonClass}>
+                  {loading
+                    ? "Please wait..."
+                    : emailMode === "signup"
+                      ? "Sign up"
+                      : "Log in"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => switchEmailMode(emailMode === "signup" ? "login" : "signup")}
+                  className="text-sm text-ink-soft underline"
+                >
+                  {emailMode === "signup"
+                    ? "Already have an account? Log in"
+                    : "New here? Create an account"}
+                </button>
+              </form>
+            ) : stage === "phone" ? (
+              <form onSubmit={sendOtp} className="flex flex-col gap-4">
+                <label className="flex flex-col gap-1 text-sm text-ink">
+                  Phone number
+                  <input
+                    type="tel"
+                    placeholder="+91XXXXXXXXXX"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                    className={authInputClass}
+                  />
+                </label>
+                <button type="submit" disabled={loading} className={authPrimaryButtonClass}>
+                  {loading ? "Sending..." : "Send OTP"}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={verifyOtp} className="flex flex-col gap-4">
+                <p className="text-sm text-ink-soft">
+                  Enter the code sent to {phone}
+                </p>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  required
+                  className={authInputClass}
+                />
+                <button type="submit" disabled={loading} className={authPrimaryButtonClass}>
+                  {loading ? "Verifying..." : "Verify"}
+                </button>
+                <div className="flex items-center justify-between text-sm">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStage("phone");
+                      setOtp("");
+                      setError(null);
+                    }}
+                    className="text-ink-soft underline"
+                  >
+                    Change number
+                  </button>
+                  <button
+                    type="button"
+                    onClick={resendOtp}
+                    disabled={cooldown > 0 || loading}
+                    className="text-ink-soft underline disabled:opacity-50"
+                  >
+                    {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+
+          {notice && (
+            <p className="mt-4 text-sm text-ink-soft">{notice}</p>
+          )}
+
+          {error && (
+            <p role="alert" className="mt-4 text-sm text-thread-red">
+              {error.kind === "invalid_credentials" ? (
+                <>
+                  We couldn&apos;t find an account with that email and password.{" "}
+                  <button
+                    type="button"
+                    onClick={() => switchEmailMode("signup")}
+                    className="underline"
+                  >
+                    Create an account
+                  </button>{" "}
+                  or{" "}
+                  <button
+                    type="button"
+                    onClick={() => switchEmailMode("forgot")}
+                    className="underline"
+                  >
+                    reset your password
+                  </button>{" "}
+                  if you forgot it.
+                </>
+              ) : error.kind === "unconfirmed" ? (
+                <>Check your inbox — we sent a confirmation link to {email.trim()}.</>
+              ) : (
+                error.message
+              )}
+            </p>
+          )}
+        </div>
+      </div>
     </main>
   );
 }
