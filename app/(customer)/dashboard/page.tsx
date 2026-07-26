@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
+import { SubmitButton } from "@/components/submit-button";
+import { requestAccountDeletion } from "./actions";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -20,6 +22,13 @@ export default async function DashboardPage() {
     .eq("customer_id", user!.id)
     .order("placed_at", { ascending: false })
     .limit(5);
+
+  const { data: pendingDeletion } = await supabase
+    .from("deletion_requests")
+    .select("id, created_at")
+    .eq("profile_id", user!.id)
+    .eq("status", "pending")
+    .maybeSingle();
 
   return (
     <div className="flex flex-col gap-8">
@@ -68,6 +77,42 @@ export default async function DashboardPage() {
               </li>
             ))}
           </ul>
+        )}
+      </div>
+
+      <div className="border-t border-line-soft pt-6">
+        <h2 className="font-display text-lg font-bold text-ink">Your data</h2>
+        <p className="mt-1 text-sm text-ink-soft">
+          See our{" "}
+          <Link href="/privacy" className="text-indigo underline">
+            Privacy Policy
+          </Link>{" "}
+          for what we collect and why.
+        </p>
+
+        {pendingDeletion ? (
+          <p className="mt-3 text-sm text-ink-soft">
+            Deletion request submitted{" "}
+            {new Date(pendingDeletion.created_at).toLocaleDateString()} — our
+            team will confirm with you before anything is removed.
+          </p>
+        ) : (
+          <form action={requestAccountDeletion} className="mt-3 flex flex-col gap-2">
+            <label className="flex flex-col gap-1 text-sm text-ink">
+              Request account deletion (optional reason)
+              <textarea
+                name="reason"
+                placeholder="Optional — why are you leaving?"
+                className="rounded border border-line bg-paper px-3 py-2"
+              />
+            </label>
+            <SubmitButton
+              pendingText="Submitting..."
+              className="w-fit rounded-full border border-thread-red px-4 py-2 text-sm text-thread-red disabled:opacity-50"
+            >
+              Request account deletion
+            </SubmitButton>
+          </form>
         )}
       </div>
     </div>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 750" width="1000" height="750" role="img" aria-labelledby="title desc">
+  <title id="title">Placeholder — tailor at work photo</title>
+  <desc id="desc">A soft placeholder standing in for a real photo of a Stitchera tailor stitching an order.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbfaf6"/>
+      <stop offset="100%" stop-color="#ede6d3"/>
+    </linearGradient>
+    <style>
+      @media (prefers-color-scheme: dark) {
+        #bgrect { fill: #16152a; }
+        #frame { stroke: #4a4870; }
+        #icon { stroke: #f0a83e; }
+        #caption { fill: #b3aec2; }
+      }
+    </style>
+  </defs>
+  <rect id="bgrect" width="1000" height="750" fill="url(#bg)"/>
+  <rect id="frame" x="36" y="36" width="928" height="678" fill="none" stroke="#e0932a" stroke-opacity="0.3" stroke-width="3" stroke-dasharray="14 10" rx="16"/>
+  <g id="icon" transform="translate(500 330)" fill="none" stroke="#e0932a" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="-70" cy="-10" r="46"/>
+    <path d="M -70 36 L -70 90"/>
+    <path d="M 10 -60 C 60 -60 95 -30 95 20 C 95 60 65 90 20 90 L -10 90"/>
+    <path d="M -30 60 L 40 60"/>
+  </g>
+  <text id="caption" x="500" y="460" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" fill="#55547a">Photo placeholder — tailor at the machine</text>
+</svg>

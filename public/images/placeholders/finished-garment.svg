@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 750" width="1000" height="750" role="img" aria-labelledby="title desc">
+  <title id="title">Placeholder — finished garment photo</title>
+  <desc id="desc">A soft placeholder standing in for a real photo of a finished, stitched garment.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f1eee7"/>
+      <stop offset="100%" stop-color="#e0d9c8"/>
+    </linearGradient>
+    <style>
+      @media (prefers-color-scheme: dark) {
+        #bgrect { fill: #201f3a; }
+        #frame { stroke: #4a4870; }
+        #icon { stroke: #7981d6; }
+        #caption { fill: #b3aec2; }
+      }
+    </style>
+  </defs>
+  <rect id="bgrect" width="1000" height="750" fill="url(#bg)"/>
+  <rect id="frame" x="36" y="36" width="928" height="678" fill="none" stroke="#3d4592" stroke-opacity="0.25" stroke-width="3" stroke-dasharray="14 10" rx="16"/>
+  <g id="icon" transform="translate(500 330)" fill="none" stroke="#3d4592" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M -30 -95 C -30 -75 -50 -65 -50 -40 L -50 100 L 50 100 L 50 -40 C 50 -65 30 -75 30 -95"/>
+    <path d="M -30 -95 C -20 -80 20 -80 30 -95"/>
+  </g>
+  <text id="caption" x="500" y="460" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" fill="#55547a">Photo placeholder — finished garment</text>
+</svg>

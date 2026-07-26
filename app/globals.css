@@ -51,6 +51,7 @@
   --font-sans: var(--font-body-face), system-ui, sans-serif;
   --font-display: var(--font-display-face), var(--font-body-face), system-ui, sans-serif;
   --font-mono: var(--font-data-face), ui-monospace, monospace;
+  --font-devanagari: var(--font-devanagari-face), var(--font-body-face), system-ui, sans-serif;
 }
 
 body {

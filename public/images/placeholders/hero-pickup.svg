@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-labelledby="title desc">
+  <title id="title">Placeholder — pickup visit photo</title>
+  <desc id="desc">A soft placeholder standing in for a real photo of a Stitchera pickup visit in Kanpur.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f1eee7"/>
+      <stop offset="100%" stop-color="#e0d9c8"/>
+    </linearGradient>
+    <style>
+      @media (prefers-color-scheme: dark) {
+        #bgrect { fill: #201f3a; }
+        #frame { stroke: #4a4870; }
+        #icon { stroke: #a2a8e6; }
+        #caption { fill: #b3aec2; }
+      }
+    </style>
+  </defs>
+  <rect id="bgrect" width="1200" height="900" fill="url(#bg)"/>
+  <rect id="frame" x="40" y="40" width="1120" height="820" fill="none" stroke="#3d4592" stroke-opacity="0.25" stroke-width="3" stroke-dasharray="14 10" rx="16"/>
+  <g id="icon" transform="translate(600 400)" fill="none" stroke="#3d4592" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="-90" y="-55" width="180" height="130" rx="14"/>
+    <path d="M -40 -55 L -25 -80 L 25 -80 L 40 -55"/>
+    <circle cx="0" cy="12" r="42"/>
+    <circle cx="0" cy="12" r="18"/>
+  </g>
+  <text id="caption" x="600" y="530" text-anchor="middle" font-family="system-ui, sans-serif" font-size="28" fill="#55547a">Photo placeholder — pickup visit, Kanpur</text>
+</svg>

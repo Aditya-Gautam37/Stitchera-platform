@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SubmitButton } from "@/components/submit-button";
@@ -10,6 +11,13 @@ export default async function BookPage({
   searchParams: Promise<{ service?: string; note?: string }>;
 }) {
   const { service: preselectedService, note: prefilledNote } = await searchParams;
+
+  // Generated once per page render, not per tap — every submission of this
+  // same loaded form (including a double-tap, or a retry after a dropped
+  // response on bad 4G) carries the same key, so create_order() can tell a
+  // retry apart from a genuinely new booking.
+  const idempotencyKey = crypto.randomUUID();
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -49,33 +57,13 @@ export default async function BookPage({
   const inSurgeWindow = istHour >= 20 || istHour < 6;
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="font-display text-2xl font-bold text-ink">
-        Book a service
-      </h1>
-
-      <div className="rounded border border-line bg-paper p-4 text-sm text-ink-soft">
-        <p className="font-medium text-ink">How this is charged</p>
-        <ul className="mt-2 flex flex-col gap-1">
-          <li>Service price — set by the tailor</li>
-          <li>Handling charge — ₹18 flat</li>
-          <li>
-            Surge charge — ₹10, only for bookings placed between 8pm–6am
-            {inSurgeWindow && (
-              <span className="ml-1 font-medium text-marigold">
-                (applies right now)
-              </span>
-            )}
-          </li>
-          <li>Delivery charge — an estimate based on your city, confirmed at pickup</li>
-        </ul>
-        <p className="mt-2">
-          Orders under ₹500 need 15% paid upfront; ₹500 and above need 30% —
-          our team will confirm payment details after you book.
-        </p>
-      </div>
-
-      <form action={createBooking} className="flex flex-col gap-4">
+    <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="flex flex-col gap-6">
+        <h1 className="font-display text-2xl font-bold text-ink">
+          Book a service
+        </h1>
+        <form action={createBooking} className="flex flex-col gap-5">
+        <input type="hidden" name="idempotency_key" value={idempotencyKey} />
         <label className="flex flex-col gap-1 text-sm">
           City
           <select
@@ -222,7 +210,43 @@ export default async function BookPage({
         >
           Place booking
         </SubmitButton>
-      </form>
+        </form>
+      </div>
+
+      <aside className="order-first flex flex-col gap-4 lg:order-none">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+          {/* TODO: replace with a real photo of the finished garment type
+              once we have per-service photography. */}
+          <Image
+            src="/images/placeholders/finished-garment.svg"
+            alt="Placeholder photo of a finished, stitched garment"
+            fill
+            unoptimized
+            className="object-cover"
+          />
+        </div>
+
+        <div className="rounded-2xl border border-line bg-paper p-5 text-sm text-ink-soft">
+          <p className="font-medium text-ink">How this is charged</p>
+          <ul className="mt-2 flex flex-col gap-1.5">
+            <li>Service price — set by the tailor</li>
+            <li>Handling charge — ₹18 flat</li>
+            <li>
+              Surge charge — ₹10, only for bookings placed between 8pm–6am
+              {inSurgeWindow && (
+                <span className="ml-1 font-medium text-marigold">
+                  (applies right now)
+                </span>
+              )}
+            </li>
+            <li>Delivery charge — an estimate based on your city, confirmed at pickup</li>
+          </ul>
+          <p className="mt-3 border-t border-line-soft pt-3">
+            Orders under ₹500 need 15% paid upfront; ₹500 and above need 30% —
+            our team will confirm payment details after you book.
+          </p>
+        </div>
+      </aside>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/constants";
+import { type OrderStatus } from "@/lib/constants";
+import { OrderTimeline } from "@/components/site/order-timeline";
 
 export default async function TrackOrderPage({
   searchParams,
@@ -72,11 +73,11 @@ export default async function TrackOrderPage({
         <p className="mt-4 text-sm text-thread-red">{notFoundMessage}</p>
       )}
       {result && (
-        <div className="mt-6 rounded border border-line bg-paper p-4">
+        <div className="mt-6 rounded-2xl border border-line bg-paper p-5">
           <p className="font-mono text-sm text-ink-soft">{result.order_number}</p>
-          <p className="mt-1 font-display text-lg font-bold text-ink">
-            {ORDER_STATUS_LABELS[result.status as OrderStatus] ?? result.status}
-          </p>
+          <div className="mt-4">
+            <OrderTimeline status={result.status as OrderStatus} />
+          </div>
         </div>
       )}
 

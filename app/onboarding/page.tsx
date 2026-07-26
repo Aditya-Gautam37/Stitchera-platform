@@ -32,6 +32,17 @@ export default async function OnboardingPage() {
               required
               className={authInputClass}
             />
+            <label className="flex items-start gap-2 text-sm text-ink-soft">
+              <input type="checkbox" name="consent" required className="mt-1" />
+              <span>
+                I agree to Stitchera collecting my address and measurements to
+                fulfil orders — see{" "}
+                <Link href="/privacy" className="text-indigo underline" target="_blank">
+                  Privacy Policy
+                </Link>
+                .
+              </span>
+            </label>
             <button type="submit" className={authPrimaryButtonClass}>
               Continue
             </button>

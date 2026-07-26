@@ -17,6 +17,7 @@ const NAV_ITEMS: {
   { href: "/admin/cities", label: "Cities & Pricing", roles: ["admin"] },
   { href: "/admin/subscriptions", label: "Subscription Plans", roles: ["admin"] },
   { href: "/admin/staff", label: "Staff", roles: ["admin"] },
+  { href: "/admin/deletion-requests", label: "Deletion Requests", roles: ["admin"] },
 ];
 
 export default async function StaffLayout({

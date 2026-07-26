@@ -21,6 +21,8 @@ export async function createBooking(formData: FormData) {
   const customerNote = formData.get("customer_note") as string | null;
   const measurementId =
     (formData.get("measurement_id") as string | null) || null;
+  const idempotencyKey =
+    (formData.get("idempotency_key") as string | null) || null;
   const paymentPreferenceRaw = formData.get("payment_preference") as string | null;
   const paymentPreference: PaymentPreference = PAYMENT_PREFERENCES.includes(
     paymentPreferenceRaw as PaymentPreference
@@ -49,6 +51,7 @@ export async function createBooking(formData: FormData) {
     p_customer_note: customerNote,
     p_measurement_id: measurementId,
     p_payment_preference: paymentPreference,
+    p_idempotency_key: idempotencyKey,
   });
 
   if (error || !orderId) {

@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { CURRENT_CONSENT_VERSION } from "@/lib/consent";
 
 export async function completeOnboarding(formData: FormData) {
   const supabase = await createClient();
@@ -15,9 +16,17 @@ export async function completeOnboarding(formData: FormData) {
     throw new Error("Name is required");
   }
 
+  if (formData.get("consent") !== "on") {
+    throw new Error("Please agree to the data collection notice to continue");
+  }
+
   const { error } = await supabase
     .from("profiles")
-    .update({ full_name: fullName })
+    .update({
+      full_name: fullName,
+      consent_given_at: new Date().toISOString(),
+      consent_version: CURRENT_CONSENT_VERSION,
+    })
     .eq("id", user.id);
 
   if (error) {

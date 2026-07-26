@@ -150,23 +150,32 @@ export default async function ServicesPage({
       ) : (
         <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((service) => (
-            <li
-              key={service.id}
-              className="flex flex-col gap-3 rounded border border-line bg-paper p-4"
-            >
-              <GarmentIcon
-                type={silhouetteFor(service.garment_type)}
-                className="h-10 w-10 text-indigo"
-              />
-              <div>
-                <p className="font-medium text-ink">{service.name}</p>
-                <p className="text-sm text-ink-soft">
-                  {service.est_days} day{service.est_days === 1 ? "" : "s"} turnaround
+            <li key={service.id}>
+              <Link
+                href={`/book?service=${service.id}`}
+                className="flex h-full flex-col gap-3 rounded-2xl border border-line bg-paper p-5 transition-colors hover:border-indigo"
+              >
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-cotton">
+                  <GarmentIcon
+                    type={silhouetteFor(service.garment_type)}
+                    className="h-8 w-8 text-indigo"
+                  />
+                </div>
+                <div>
+                  <p className="font-display font-bold text-ink">{service.name}</p>
+                  {service.name_hi && (
+                    <p className="font-devanagari text-sm text-ink-soft">
+                      {service.name_hi}
+                    </p>
+                  )}
+                  <p className="mt-1 text-sm text-ink-soft">
+                    {service.est_days} day{service.est_days === 1 ? "" : "s"} turnaround
+                  </p>
+                </div>
+                <p className="mt-auto font-mono text-lg font-medium text-ink">
+                  ₹{service.base_price}
                 </p>
-              </div>
-              <p className="mt-auto font-mono text-lg font-medium text-ink">
-                ₹{service.base_price}
-              </p>
+              </Link>
             </li>
           ))}
         </ul>

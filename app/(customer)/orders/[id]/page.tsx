@@ -12,6 +12,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { SubmitButton } from "@/components/submit-button";
 import { StarRatingInput } from "@/components/site/star-rating-input";
+import { OrderTimeline } from "@/components/site/order-timeline";
 import { cancelOrder } from "./actions";
 import { submitReview } from "./review-actions";
 
@@ -31,14 +32,33 @@ export default async function OrderDetailPage({
        address_line, address_landmark, address_pincode, contact_phone, cancel_reason, placed_at,
        payment_status, tailor_id, pickup_agent_id,
        order_items ( id, qty, unit_price, line_total, services ( name ),
-         measurements ( label, person_name, values ) ),
-       tailor:tailors ( name ),
-       pickup_agent:profiles!pickup_agent_id ( full_name )`
+         measurements ( label, person_name, values ) )`
     )
     .eq("id", id)
     .single();
 
   if (!order) notFound();
+
+  // tailors/profiles no longer grant a customer full-row SELECT for their
+  // assigned provider (0014) — PostgREST can't embed through a view either,
+  // so these are separate queries against the name-only views instead of
+  // an embed on the base tables.
+  const [{ data: tailor }, { data: pickupAgent }] = await Promise.all([
+    order.tailor_id
+      ? supabase
+          .from("customer_assigned_tailors")
+          .select("name")
+          .eq("order_id", order.id)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+    order.pickup_agent_id
+      ? supabase
+          .from("customer_assigned_pickup_agents")
+          .select("full_name")
+          .eq("order_id", order.id)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
 
   const { data: history } = await supabase
     .from("order_status_history")
@@ -64,11 +84,6 @@ export default async function OrderDetailPage({
 
   const status = order.status as OrderStatus;
   const canCancel = CANCELLABLE_STATUSES.includes(status);
-
-  const tailor = Array.isArray(order.tailor) ? order.tailor[0] : order.tailor;
-  const pickupAgent = Array.isArray(order.pickup_agent)
-    ? order.pickup_agent[0]
-    : order.pickup_agent;
 
   const reviewedTypes = new Set((reviews ?? []).map((r) => r.reviewee_type));
   const canReviewTailor = order.tailor_id && !reviewedTypes.has("tailor");
@@ -280,17 +295,13 @@ export default async function OrderDetailPage({
 
       <div>
         <h2 className="text-lg font-medium text-ink">Timeline</h2>
-        <ul className="text-sm text-ink-soft">
-          {history?.map((event, i) => (
-            <li key={i}>
-              {event.from_status
-                ? ORDER_STATUS_LABELS[event.from_status as OrderStatus]
-                : "created"}{" "}
-              → {ORDER_STATUS_LABELS[event.to_status as OrderStatus]} (
-              {new Date(event.created_at).toLocaleString()})
-            </li>
-          ))}
-        </ul>
+        <div className="mt-4">
+          <OrderTimeline
+            status={status}
+            history={history ?? undefined}
+            cancelReason={order.cancel_reason}
+          />
+        </div>
       </div>
     </div>
   );
