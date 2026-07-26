@@ -54,6 +54,24 @@ export function LoginForm({ next }: { next: string }) {
     return () => clearInterval(timer);
   }, [cooldown]);
 
+  // A clicked email-confirmation link lands back here (not on a protected
+  // page — middleware would bounce it before this client JS ever ran) with
+  // the session in the URL. supabase-js picks that up automatically and
+  // fires SIGNED_IN; without this, the confirmed user would just sit on an
+  // empty login form despite already being authenticated.
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        router.replace(next);
+        router.refresh();
+      }
+    });
+    return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function switchEmailMode(mode: "login" | "signup" | "forgot") {
     setEmailMode(mode);
     setError(null);
@@ -126,6 +144,11 @@ export function LoginForm({ next }: { next: string }) {
       const { data, error } = await supabase.auth.signUp({
         email: trimmedEmail,
         password,
+        // Without this, Supabase falls back to the project's Site URL
+        // setting for the confirmation link — which is easy to leave
+        // pointed at localhost from local dev and would send every real
+        // signup confirmation to a machine that isn't running.
+        options: { emailRedirectTo: `${window.location.origin}/login` },
       });
       setLoading(false);
       if (error) {
