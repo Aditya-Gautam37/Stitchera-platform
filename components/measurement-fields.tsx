@@ -24,7 +24,7 @@ export function MeasurementFields({
   return (
     <>
       <div className="flex flex-wrap gap-4">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="flex flex-col gap-1 text-sm text-ink">
           Label
           <input
             type="text"
@@ -32,15 +32,15 @@ export function MeasurementFields({
             placeholder="e.g. Papa kurta"
             defaultValue={defaults?.label ?? ""}
             required
-            className="rounded border px-3 py-2"
+            className="rounded border border-line bg-paper px-3 py-2"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="flex flex-col gap-1 text-sm text-ink">
           Garment
           <select
             name="garment_type"
             defaultValue={defaults?.garment_type ?? "kurta"}
-            className="rounded border px-3 py-2"
+            className="rounded border border-line bg-paper px-3 py-2"
           >
             {GARMENT_TYPES.map((g) => (
               <option key={g} value={g}>
@@ -49,22 +49,22 @@ export function MeasurementFields({
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="flex flex-col gap-1 text-sm text-ink">
           Person (optional)
           <input
             type="text"
             name="person_name"
             placeholder="Whose measurements?"
             defaultValue={defaults?.person_name ?? ""}
-            className="rounded border px-3 py-2"
+            className="rounded border border-line bg-paper px-3 py-2"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="flex flex-col gap-1 text-sm text-ink">
           Unit
           <select
             name="unit"
             defaultValue={values.unit ?? "inch"}
-            className="rounded border px-3 py-2"
+            className="rounded border border-line bg-paper px-3 py-2"
           >
             {MEASUREMENT_UNITS.map((u) => (
               <option key={u} value={u}>
@@ -76,13 +76,13 @@ export function MeasurementFields({
       </div>
 
       <div>
-        <p className="text-sm font-medium">Measurements</p>
-        <p className="text-xs text-zinc-500">
+        <p className="text-sm font-medium text-ink">Measurements</p>
+        <p className="text-xs text-ink-soft">
           Fill only what applies to this garment — blanks are ignored.
         </p>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {MEASUREMENT_FIELDS.map((field) => (
-            <label key={field.key} className="flex flex-col gap-1 text-sm">
+            <label key={field.key} className="flex flex-col gap-1 text-sm text-ink">
               {field.label}
               <input
                 type="number"
@@ -90,20 +90,20 @@ export function MeasurementFields({
                 min="1"
                 step="0.25"
                 defaultValue={values[field.key] ?? ""}
-                className="rounded border px-2 py-1.5"
+                className="rounded border border-line bg-paper px-2 py-1.5"
               />
             </label>
           ))}
         </div>
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="flex flex-col gap-1 text-sm text-ink">
         Notes (optional)
         <textarea
           name="notes"
           defaultValue={defaults?.notes ?? ""}
           placeholder="Loose fit, full sleeve, etc."
-          className="rounded border px-3 py-2"
+          className="rounded border border-line bg-paper px-3 py-2"
         />
       </label>
     </>

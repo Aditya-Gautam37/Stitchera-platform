@@ -16,14 +16,17 @@ export default async function OrdersPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">Your orders</h1>
+      <h1 className="font-display text-2xl font-bold text-ink">Your orders</h1>
       {!orders?.length ? (
-        <p className="text-sm text-zinc-500">No orders yet.</p>
+        <p className="text-sm text-ink-soft">No orders yet.</p>
       ) : (
-        <ul className="divide-y">
+        <ul className="divide-y divide-line-soft">
           {orders.map((order) => (
             <li key={order.id} className="py-3">
-              <Link href={`/orders/${order.id}`} className="flex justify-between">
+              <Link
+                href={`/orders/${order.id}`}
+                className="flex justify-between text-sm text-ink hover:text-indigo"
+              >
                 <span>
                   {order.order_number} ·{" "}
                   {ORDER_STATUS_LABELS[order.status as OrderStatus]}

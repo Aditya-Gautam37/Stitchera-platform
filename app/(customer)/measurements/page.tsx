@@ -21,43 +21,43 @@ export default async function MeasurementsPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Measurements</h1>
-          <p className="text-sm text-zinc-500">
+          <h1 className="font-display text-2xl font-bold text-ink">Measurements</h1>
+          <p className="text-sm text-ink-soft">
             Save them once and reuse them on every order.
           </p>
         </div>
         <Link
           href="/measurements/new"
-          className="rounded bg-black px-3 py-1.5 text-sm text-white"
+          className="rounded-full bg-indigo px-4 py-2 text-sm font-medium text-paper hover:bg-indigo-strong"
         >
           Add measurements
         </Link>
       </div>
 
       {!measurements?.length ? (
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-ink-soft">
           Nothing saved yet. Add a set and your next booking gets faster.
         </p>
       ) : (
-        <ul className="divide-y">
+        <ul className="divide-y divide-line-soft">
           {measurements.map((m) => (
             <li key={m.id} className="flex items-start justify-between gap-4 py-3">
               <div>
-                <p className="font-medium">
+                <p className="font-medium text-ink">
                   {m.label}
-                  <span className="ml-2 text-sm font-normal text-zinc-500">
+                  <span className="ml-2 text-sm font-normal text-ink-soft">
                     {m.garment_type}
                     {m.person_name ? ` · ${m.person_name}` : ""}
                   </span>
                 </p>
-                <p className="mt-0.5 text-sm text-zinc-600 dark:text-zinc-400">
+                <p className="mt-0.5 font-mono text-sm text-ink-soft">
                   {formatMeasurementSummary(m.values)}
                 </p>
                 {m.notes && (
-                  <p className="text-sm text-zinc-500">{m.notes}</p>
+                  <p className="text-sm text-ink-soft">{m.notes}</p>
                 )}
                 {m.taken_by && (
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-ink-soft">
                     Recorded by our pickup team
                   </p>
                 )}
@@ -65,7 +65,7 @@ export default async function MeasurementsPage() {
               <div className="flex shrink-0 items-center gap-3 text-sm">
                 <Link
                   href={`/measurements/${m.id}`}
-                  className="text-zinc-600 underline dark:text-zinc-400"
+                  className="text-indigo underline"
                 >
                   Edit
                 </Link>
@@ -73,7 +73,7 @@ export default async function MeasurementsPage() {
                   <input type="hidden" name="measurement_id" value={m.id} />
                   <SubmitButton
                     pendingText="Removing..."
-                    className="text-zinc-500 underline disabled:opacity-50"
+                    className="text-ink-soft underline disabled:opacity-50"
                   >
                     Remove
                   </SubmitButton>

@@ -22,40 +22,43 @@ export default async function DashboardPage() {
     .limit(5);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold">
+        <h1 className="font-display text-2xl font-bold text-ink">
           Welcome, {profile?.full_name}
         </h1>
-        <p className="text-sm text-zinc-500">{profile?.phone}</p>
+        <p className="text-sm text-ink-soft">{profile?.phone}</p>
       </div>
 
       <div className="flex flex-wrap gap-3">
         <Link
           href="/book"
-          className="rounded bg-black px-4 py-2 text-sm text-white"
+          className="rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong"
         >
           Book a service
         </Link>
         <Link
           href="/measurements"
-          className="rounded border px-4 py-2 text-sm font-medium"
+          className="rounded-full border border-line px-5 py-2.5 text-sm font-medium text-ink hover:border-indigo"
         >
           My measurements
         </Link>
       </div>
 
       <div>
-        <h2 className="text-lg font-medium">Recent orders</h2>
+        <h2 className="font-display text-lg font-bold text-ink">Recent orders</h2>
         {!orders?.length ? (
-          <p className="mt-2 text-sm text-zinc-500">
+          <p className="mt-2 text-sm text-ink-soft">
             No orders yet — book your first one!
           </p>
         ) : (
-          <ul className="mt-2 divide-y">
+          <ul className="mt-2 divide-y divide-line-soft">
             {orders.map((order) => (
               <li key={order.id} className="py-3">
-                <Link href={`/orders/${order.id}`} className="flex justify-between">
+                <Link
+                  href={`/orders/${order.id}`}
+                  className="flex justify-between text-sm text-ink hover:text-indigo"
+                >
                   <span>
                     {order.order_number} ·{" "}
                     {ORDER_STATUS_LABELS[order.status as OrderStatus]}

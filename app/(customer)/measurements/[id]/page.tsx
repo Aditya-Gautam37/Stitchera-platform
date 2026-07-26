@@ -28,7 +28,7 @@ export default async function EditMeasurementPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">Edit measurements</h1>
+      <h1 className="font-display text-2xl font-bold text-ink">Edit measurements</h1>
       <form action={updateMeasurement} className="flex flex-col gap-5">
         <input type="hidden" name="measurement_id" value={measurement.id} />
         <MeasurementFields
@@ -43,11 +43,11 @@ export default async function EditMeasurementPage({
         <div className="flex items-center gap-4">
           <SubmitButton
             pendingText="Saving..."
-            className="rounded bg-black px-4 py-2 text-sm text-white disabled:opacity-50"
+            className="rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong disabled:opacity-50"
           >
             Save changes
           </SubmitButton>
-          <Link href="/measurements" className="text-sm text-zinc-500 underline">
+          <Link href="/measurements" className="text-sm text-ink-soft underline">
             Cancel
           </Link>
         </div>

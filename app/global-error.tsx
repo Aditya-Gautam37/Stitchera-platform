@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import "./globals.css";
 
 export default function GlobalError({
   error,
@@ -15,24 +16,15 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body>
-        <main style={{ padding: 32, maxWidth: 480, margin: "0 auto" }}>
-          <h1 style={{ fontSize: 24, fontWeight: 600 }}>
-            Something went wrong
-          </h1>
-          <p style={{ color: "#71717a", fontSize: 14, marginTop: 8 }}>
+      <body className="min-h-full bg-cotton text-ink antialiased">
+        <main className="mx-auto flex max-w-md flex-col items-start gap-4 p-8">
+          <h1 className="text-2xl font-bold">Something went wrong</h1>
+          <p className="text-sm text-ink-soft">
             An unexpected error occurred. Please try again.
           </p>
           <button
             onClick={reset}
-            style={{
-              marginTop: 16,
-              borderRadius: 6,
-              background: "black",
-              color: "white",
-              padding: "8px 16px",
-              fontSize: 14,
-            }}
+            className="rounded-full bg-indigo px-5 py-2.5 text-sm font-medium text-paper hover:bg-indigo-strong"
           >
             Try again
           </button>
