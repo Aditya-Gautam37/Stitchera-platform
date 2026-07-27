@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { buttonClass, cardClass } from "@/components/ui/styles";
+import { imageForGarmentType } from "@/lib/garment-images";
 
 const HOW_IT_WORKS = [
   {
@@ -128,14 +129,13 @@ export default async function Home() {
               className={`flex flex-col gap-3 overflow-hidden transition-colors hover:border-indigo ${cardClass}`}
             >
               <div className="relative aspect-[4/3] w-full">
-                {/* TODO: real photography of this garment — real Indian
-                    tailoring, real fabric and machines, natural light, no
-                    generic corporate stock. */}
+                {/* Stand-in photography by garment type — see
+                    lib/garment-images.ts for sourcing/credit. Swap for
+                    per-service photos (services.image_url) once they exist. */}
                 <Image
-                  src="/images/placeholders/finished-garment.svg"
-                  alt={`Placeholder photo — ${service.name}`}
+                  src={imageForGarmentType(service.garment_type)}
+                  alt={`${service.name} — tailoring in progress`}
                   fill
-                  unoptimized
                   className="object-cover"
                 />
               </div>

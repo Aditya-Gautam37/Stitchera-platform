@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { SubmitButton } from "@/components/submit-button";
 import { PAYMENT_PREFERENCE_LABELS, PAYMENT_PREFERENCES } from "@/lib/constants";
 import { buttonClass, cardClass } from "@/components/ui/styles";
+import { DEFAULT_TAILORING_IMAGE } from "@/lib/garment-images";
 import { createBooking } from "./actions";
 
 export default async function BookPage({
@@ -216,14 +217,12 @@ export default async function BookPage({
 
       <aside className="order-first flex flex-col gap-4 lg:order-none">
         <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-          {/* TODO: real photography of the finished garment type — real
-              Indian tailoring, real fabric and machines, natural light,
-              no generic corporate stock. */}
+          {/* Stand-in photography — see lib/garment-images.ts for
+              sourcing/credit. */}
           <Image
-            src="/images/placeholders/finished-garment.svg"
-            alt="Placeholder photo of a finished, stitched garment"
+            src={DEFAULT_TAILORING_IMAGE}
+            alt="A tailor at work stitching a garment"
             fill
-            unoptimized
             className="object-cover"
           />
         </div>

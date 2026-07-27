@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { imageForGarmentType } from "@/lib/garment-images";
 
 type ServiceRow = {
   id: string;
@@ -186,14 +187,12 @@ export default async function ServicesPage({
                 className="flex h-full flex-col gap-3 overflow-hidden rounded-2xl border border-line bg-paper transition-colors hover:border-indigo"
               >
                 <div className="relative aspect-[4/3] w-full">
-                  {/* TODO: real photography of this garment — real Indian
-                      tailoring, real fabric and machines, natural light,
-                      no generic corporate stock. */}
+                  {/* Stand-in photography by garment type — see
+                      lib/garment-images.ts for sourcing/credit. */}
                   <Image
-                    src="/images/placeholders/finished-garment.svg"
-                    alt={`Placeholder photo — ${service.name}`}
+                    src={imageForGarmentType(service.garment_type)}
+                    alt={`${service.name} — tailoring in progress`}
                     fill
-                    unoptimized
                     className="object-cover"
                   />
                 </div>
