@@ -63,7 +63,7 @@ export default async function DashboardPage() {
               <li key={order.id} className="py-3">
                 <Link
                   href={`/orders/${order.id}`}
-                  className="flex items-center justify-between text-sm text-ink hover:text-indigo"
+                  className="flex items-center justify-between text-sm text-ink transition-colors hover:text-indigo"
                 >
                   <span className="flex items-center gap-2">
                     {order.order_number}

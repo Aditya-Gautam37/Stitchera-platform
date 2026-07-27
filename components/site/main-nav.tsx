@@ -27,7 +27,7 @@ export function MainNav() {
           <Link
             key={tab.href}
             href={tab.href}
-            className="shrink-0 whitespace-nowrap px-3 py-3 text-sm font-medium text-ink-soft hover:text-indigo"
+            className="shrink-0 whitespace-nowrap px-3 py-3 text-sm font-medium text-ink-soft transition-colors hover:text-indigo"
           >
             {tab.label}
           </Link>

@@ -60,7 +60,7 @@ export default async function TailorOverviewPage() {
               <li key={o.id} className="py-2">
                 <Link
                   href={`/tailor/orders/${o.id}`}
-                  className="flex items-center justify-between text-sm text-ink hover:text-indigo"
+                  className="flex items-center justify-between text-sm text-ink transition-colors hover:text-indigo"
                 >
                   <span className="flex items-center gap-2">
                     {o.order_number}

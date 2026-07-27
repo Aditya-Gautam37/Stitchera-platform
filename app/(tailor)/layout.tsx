@@ -24,13 +24,13 @@ export default async function TailorLayout({
             </p>
           </div>
           <nav className="flex gap-4 text-sm font-medium text-ink-soft">
-            <Link href="/tailor" className="hover:text-indigo">
+            <Link href="/tailor" className="transition-colors hover:text-indigo">
               Overview
             </Link>
-            <Link href="/tailor/orders" className="hover:text-indigo">
+            <Link href="/tailor/orders" className="transition-colors hover:text-indigo">
               Orders
             </Link>
-            <Link href="/tailor/payouts" className="hover:text-indigo">
+            <Link href="/tailor/payouts" className="transition-colors hover:text-indigo">
               Payouts
             </Link>
           </nav>

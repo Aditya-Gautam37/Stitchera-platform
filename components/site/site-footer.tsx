@@ -13,18 +13,18 @@ export function SiteFooter() {
         <div>
           <p className="text-sm font-semibold text-ink">Company</p>
           <ul className="mt-2 flex flex-col gap-2 text-sm text-ink-soft">
-            <li><Link href="/contact" className="hover:text-indigo">Contact us</Link></li>
-            <li><Link href="/faq" className="hover:text-indigo">FAQ</Link></li>
-            <li><Link href="/tailor-registration" className="hover:text-indigo">Register as a tailor</Link></li>
-            <li><Link href="/delivery-registration" className="hover:text-indigo">Register as a delivery partner</Link></li>
+            <li><Link href="/contact" className="transition-colors hover:text-indigo">Contact us</Link></li>
+            <li><Link href="/faq" className="transition-colors hover:text-indigo">FAQ</Link></li>
+            <li><Link href="/tailor-registration" className="transition-colors hover:text-indigo">Register as a tailor</Link></li>
+            <li><Link href="/delivery-registration" className="transition-colors hover:text-indigo">Register as a delivery partner</Link></li>
           </ul>
         </div>
         <div>
           <p className="text-sm font-semibold text-ink">Account</p>
           <ul className="mt-2 flex flex-col gap-2 text-sm text-ink-soft">
-            <li><Link href="/login" className="hover:text-indigo">Sign in</Link></li>
-            <li><Link href="/orders" className="hover:text-indigo">Track an order</Link></li>
-            <li><Link href="/subscriptions" className="hover:text-indigo">Subscription plans</Link></li>
+            <li><Link href="/login" className="transition-colors hover:text-indigo">Sign in</Link></li>
+            <li><Link href="/orders" className="transition-colors hover:text-indigo">Track an order</Link></li>
+            <li><Link href="/subscriptions" className="transition-colors hover:text-indigo">Subscription plans</Link></li>
           </ul>
         </div>
       </div>

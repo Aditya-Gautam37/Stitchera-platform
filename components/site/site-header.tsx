@@ -57,7 +57,7 @@ export async function SiteHeader() {
         </form>
 
         <div className="ml-auto flex shrink-0 items-center gap-4">
-          <Link href="/cart" aria-label="Cart" className="text-ink-soft hover:text-indigo">
+          <Link href="/cart" aria-label="Cart" className="text-ink-soft transition-colors hover:text-indigo">
             <svg viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6">
               <path d="M3 5h2l1.2 9.4A1.5 1.5 0 007.7 15.7h7.1a1.5 1.5 0 001.48-1.28L17.5 8H5.4" strokeLinejoin="round" />
               <circle cx="8" cy="18" r="1" fill="currentColor" stroke="none" />
@@ -66,7 +66,7 @@ export async function SiteHeader() {
           </Link>
           <Link
             href="/track"
-            className="hidden text-sm font-medium text-ink-soft hover:text-indigo md:inline"
+            className="hidden text-sm font-medium text-ink-soft transition-colors hover:text-indigo md:inline"
           >
             Track order
           </Link>

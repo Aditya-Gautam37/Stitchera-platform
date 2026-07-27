@@ -28,7 +28,7 @@ export default async function TailorOrdersPage() {
             <li key={o.id} className="py-3">
               <Link
                 href={`/tailor/orders/${o.id}`}
-                className="flex items-center justify-between text-sm text-ink hover:text-indigo"
+                className="flex items-center justify-between text-sm text-ink transition-colors hover:text-indigo"
               >
                 <span>{o.order_number}</span>
                 <Badge tone={ORDER_STATUS_TONE[o.status as OrderStatus]}>

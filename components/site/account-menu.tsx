@@ -13,6 +13,7 @@ type MenuProfile = {
 export function AccountMenu({ profile }: { profile: MenuProfile }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -24,11 +25,23 @@ export function AccountMenu({ profile }: { profile: MenuProfile }) {
     return () => document.removeEventListener("click", onClick);
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
   if (!profile) {
     return (
       <Link
         href="/login"
-        className="text-sm font-medium text-ink hover:text-indigo"
+        className="text-sm font-medium text-ink transition-colors hover:text-indigo"
       >
         Sign in
       </Link>
@@ -47,11 +60,12 @@ export function AccountMenu({ profile }: { profile: MenuProfile }) {
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-haspopup="true"
-        className="flex items-center gap-1 text-sm font-medium text-ink hover:text-indigo"
+        className="flex items-center gap-1 text-sm font-medium text-ink transition-colors hover:text-indigo"
       >
         {profile.fullName || "Account"}
         <svg
@@ -68,7 +82,7 @@ export function AccountMenu({ profile }: { profile: MenuProfile }) {
         <div className="absolute right-0 z-20 mt-2 w-52 rounded-md border border-line bg-paper py-1 shadow-lg">
           <Link
             href={dashboardHref}
-            className="block px-4 py-2 text-sm text-ink hover:bg-cotton"
+            className="block px-4 py-2 text-sm text-ink transition-colors hover:bg-cotton"
             onClick={() => setOpen(false)}
           >
             Dashboard
@@ -77,14 +91,14 @@ export function AccountMenu({ profile }: { profile: MenuProfile }) {
             <>
               <Link
                 href="/orders"
-                className="block px-4 py-2 text-sm text-ink hover:bg-cotton"
+                className="block px-4 py-2 text-sm text-ink transition-colors hover:bg-cotton"
                 onClick={() => setOpen(false)}
               >
                 My orders
               </Link>
               <Link
                 href="/measurements"
-                className="block px-4 py-2 text-sm text-ink hover:bg-cotton"
+                className="block px-4 py-2 text-sm text-ink transition-colors hover:bg-cotton"
                 onClick={() => setOpen(false)}
               >
                 My measurements
@@ -94,7 +108,7 @@ export function AccountMenu({ profile }: { profile: MenuProfile }) {
           <form action={logout} className="border-t border-line-soft">
             <button
               type="submit"
-              className="block w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-cotton"
+              className="block w-full px-4 py-2 text-left text-sm text-ink-soft transition-colors hover:bg-cotton"
             >
               Log out
             </button>
