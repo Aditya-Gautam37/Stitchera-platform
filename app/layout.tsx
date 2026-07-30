@@ -31,8 +31,9 @@ const devanagari = Hind({
 });
 
 export const metadata: Metadata = {
-  title: "Stitchera",
-  description: "Doorstep tailoring — pickup, stitch, deliver.",
+  title: "Stitchera — Doorstep Tailoring",
+  description:
+    "घर से pickup, verified local tailor से सिलाई, quality check और doorstep delivery। कानपुर में उपलब्ध।",
 };
 
 export default function RootLayout({

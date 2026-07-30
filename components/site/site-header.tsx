@@ -28,10 +28,11 @@ export async function SiteHeader() {
     .maybeSingle();
 
   return (
-    <header className="sticky top-0 z-30 bg-paper">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-4 py-3">
-        <Link href="/" className="shrink-0 font-display text-xl font-bold text-ink">
-          Stitchera
+    <header className="sticky top-0 z-30 border-b border-line-soft bg-paper/95 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        <Link href="/" className="flex shrink-0 items-center gap-2 font-display text-xl font-bold tracking-tight text-ink">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo text-sm text-paper">S</span>
+          STITCHERA
         </Link>
 
         <span className="hidden shrink-0 items-center gap-1 text-sm text-ink-soft sm:flex">
@@ -39,7 +40,7 @@ export async function SiteHeader() {
             <path d="M10 18s6-5.2 6-10a6 6 0 10-12 0c0 4.8 6 10 6 10z" />
             <circle cx="10" cy="8" r="2.2" />
           </svg>
-          {city?.name ?? "Kanpur"}
+          {city?.name ?? "Kanpur"} <span className="text-xs">⌄</span>
         </span>
 
         <form
@@ -51,24 +52,21 @@ export async function SiteHeader() {
           <input
             type="search"
             name="q"
-            placeholder="Search services — kurta, blouse, alteration…"
+            placeholder="Search kurta, blouse, alteration…"
             className="w-full rounded-full border border-line bg-cotton px-4 py-2 text-sm text-ink placeholder:text-ink-soft focus:border-indigo"
           />
         </form>
 
         <div className="ml-auto flex shrink-0 items-center gap-4">
-          <Link href="/cart" aria-label="Cart" className="text-ink-soft transition-colors hover:text-indigo">
+          <Link href="/cart" aria-label="Cart" className="hidden text-ink-soft transition-colors hover:text-indigo sm:block">
             <svg viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6">
               <path d="M3 5h2l1.2 9.4A1.5 1.5 0 007.7 15.7h7.1a1.5 1.5 0 001.48-1.28L17.5 8H5.4" strokeLinejoin="round" />
               <circle cx="8" cy="18" r="1" fill="currentColor" stroke="none" />
               <circle cx="15" cy="18" r="1" fill="currentColor" stroke="none" />
             </svg>
           </Link>
-          <Link
-            href="/track"
-            className="hidden text-sm font-medium text-ink-soft transition-colors hover:text-indigo md:inline"
-          >
-            Track order
+          <Link href="/book" className="hidden rounded-full bg-indigo px-4 py-2 text-sm font-semibold text-paper transition hover:bg-indigo-strong md:inline-flex">
+            Book pickup
           </Link>
           <AccountMenu profile={profile} />
         </div>

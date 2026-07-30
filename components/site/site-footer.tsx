@@ -3,11 +3,11 @@ import Link from "next/link";
 export function SiteFooter() {
   return (
     <footer className="mt-16 border-t border-line bg-paper">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-3">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:grid-cols-3 sm:px-6 lg:px-8">
         <div>
           <p className="font-display text-lg font-bold text-ink">Stitchera</p>
           <p className="mt-2 text-sm text-ink-soft">
-            Doorstep tailoring — pickup, stitch, deliver. Currently serving Kanpur.
+            Doorstep tailoring — pickup, stitch, quality check और delivery. अभी कानपुर में उपलब्ध।
           </p>
         </div>
         <div>
@@ -29,7 +29,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-line-soft px-4 py-4 text-center text-xs text-ink-soft">
-        © {new Date().getFullYear()} Stitchera. All rights reserved.
+        © {new Date().getFullYear()} Stitchera. कानपुर, उत्तर प्रदेश।
       </div>
     </footer>
   );
